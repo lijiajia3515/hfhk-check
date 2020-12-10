@@ -1,0 +1,74 @@
+spring:
+  application:
+    name: service-check-v1
+  profiles:
+    active: local
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    locale: zh_CN
+    default-property-inclusion: non_empty
+    property-naming-strategy: UPPER_CAMEL_CASE
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+      WRITE_DATE_KEYS_AS_TIMESTAMPS: false
+      WRITE_DATES_WITH_ZONE_ID: false
+    deserialization:
+      ADJUST_DATES_TO_CONTEXT_TIME_ZONE: false
+  webflux:
+    format:
+      date: yyyy-MM-dd HH:mm:ss
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 1GB
+  data:
+    mongodb:
+      authentication-database: cairo
+      database: cairo-system
+      grid-fs-database: cairo-system
+  cloud:
+    nacos:
+      discovery:
+        metadata:
+          version: v1
+
+server:
+  http2:
+    enabled: true
+  servlet:
+    encoding:
+      force: true
+
+feign:
+  hystrix:
+    enabled: false
+  okhttp:
+    enabled: true
+  httpclient:
+    connection-timeout: 60000
+  compression:
+    request:
+      min-request-size: 204000
+  client:
+    default-to-properties: true
+    config:
+      default:
+        logger-level: FULL
+      serviceAuthV1AuthenticationBasicClient:
+        logger-level: FULL
+        request-interceptors:
+          - com.hfhk.cairo.feign.interceptor.BasicRequestInterceptor
+      serviceAuthV1UserOAuthClientCredentialsClient:
+        logger-level: FULL
+        request-interceptors:
+          - com.hfhk.cairo.feign.interceptor.ClientOAuth2RequestInterceptor
+      serviceSystemV1FileRequestClient:
+        logger-level: FULL
+        request-interceptors:
+          - com.hfhk.cairo.feign.interceptor.RequestOAuth2RequestInterceptor
+
+logging:
+  level:
+    root: info
+    com.hfhk: debug

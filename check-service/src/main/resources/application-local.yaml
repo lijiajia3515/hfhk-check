@@ -1,0 +1,46 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://127.0.0.1:10000/.well-known/jwks.json
+  cloud:
+    nacos:
+      server-addr: 192.168.30.21:8848
+      discovery:
+        server-addr: 192.168.30.21:8848
+        namespace: local
+        group: local
+      # config:
+      #   server-addr: 192.168.30.21:8848
+      #   namespace: local
+      #   group: local
+      #   file-extension: yaml
+
+  data:
+    mongodb:
+      host: 192.168.30.21
+      port: 27017
+      username: cairo
+      password: Hfhk-cairo-!@#-1230.
+      authentication-database: cairo
+      database: cairo-system
+      grid-fs-database: cairo-system
+      auto-index-creation: true
+
+
+server:
+  port: 10011
+
+security:
+  oauth2:
+    client:
+      id: cairo_service_system
+      client-id: cairo_service_system
+      client-secret: cairo_service_system
+      grant-type: client_credentials
+      access-token-uri: http://127.0.0.1:10000/oauth/token
+
+logging:
+  level:
+    com.hfhk: debug

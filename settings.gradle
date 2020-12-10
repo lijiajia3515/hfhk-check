@@ -1,0 +1,5 @@
+rootProject.name = 'check'
+
+include 'check-domain'
+include 'check-service'
+include 'check-client'
