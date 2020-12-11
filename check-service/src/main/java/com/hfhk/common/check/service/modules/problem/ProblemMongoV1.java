@@ -29,6 +29,11 @@ public class ProblemMongoV1 implements Serializable {
 	private String check;
 
 	/**
+	 * 编码
+	 */
+	private List<Long> serialNumber;
+
+	/**
 	 * 标题
 	 */
 	private String title;

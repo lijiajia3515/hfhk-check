@@ -6,10 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 @Data
-@Accessors
+@Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
+
+@Builder
 public class Problem {
 	/**
 	 * id
@@ -46,11 +50,13 @@ public class Problem {
 	@Builder.Default
 	private Integer score = 0;
 
+	private List<ProblemRule> rules;
+
 	/**
 	 * 排序值
 	 */
 	@Builder.Default
-	private Long sort;
+	private Long sort = 0L;
 
 
 }

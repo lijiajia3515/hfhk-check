@@ -1,4 +1,4 @@
-package com.hfhk.common.check.service.modules.check;
+package com.hfhk.common.check.service.modules.problem;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,8 +12,20 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CheckFindRequest {
-	private String parent;
+public class ProblemFindRequest {
+
+	/**
+	 * 关键字搜索
+	 */
+	private String keywords;
+
+	/**
+	 * 检查体系
+	 */
+	private String check;
+
+	/**
+	 * 编码
+	 */
 	private String serialNumber;
-	private String name;
 }

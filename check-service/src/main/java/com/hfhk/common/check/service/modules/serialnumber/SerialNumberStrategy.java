@@ -1,4 +1,4 @@
-package com.hfhk.common.check.service.modules.serial;
+package com.hfhk.common.check.service.modules.serialnumber;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,15 +29,8 @@ public enum SerialNumberStrategy {
 	 * 22 进制
 	 */
 	BASE_22() {
-		private static final int radix = 22;
-		// private final List<Character> SOURCE = Arrays.asList(
-		//	'0', '1', '2', '3', '4',
-		//	'5', '6', '7', '8', '9',
-		//	'A', 'B', 'C', 'D', 'E',
-		//	'F', 'G', 'H', 'I', 'J',
-		//	'K', 'L', 'M', 'N', '0',
-		//	'P', 'Q'
-		//);
+		private static final int RADIX = 22;
+
 		private final List<Character> DIGITS = Arrays.asList(
 			'A', 'B', 'C', 'D', 'E',
 			'F', 'G', 'H', 'J', 'K',
@@ -49,9 +42,9 @@ public enum SerialNumberStrategy {
 
 		@Override
 		public String encode(Long number) {
-			return Long.toString(number, radix).chars()
+			return Long.toString(number, RADIX).chars()
 				.mapToObj(x -> (char) x)
-				.map(x -> DIGITS.get(Character.digit(x, radix)))
+				.map(x -> DIGITS.get(Character.digit(x, RADIX)))
 				.map(Object::toString)
 				.collect(Collectors.joining());
 		}
@@ -61,14 +54,15 @@ public enum SerialNumberStrategy {
 			try {
 				return Long.parseLong(sn.chars()
 						.mapToObj(x -> (char) x)
-						.map(x -> Long.toString(DIGITS_MAP.getOrDefault(x, 0), radix))
+						.map(x -> Long.toString(DIGITS_MAP.getOrDefault(x, 0), RADIX))
 						.collect(Collectors.joining()),
-					radix);
+					RADIX);
 			} catch (NumberFormatException e) {
 				return 0L;
 			}
 		}
 	},
+
 	/**
 	 * 32 进制
 	 */
@@ -97,6 +91,7 @@ public enum SerialNumberStrategy {
 			return null;
 		}
 	},
+
 	/**
 	 * 纯数字
 	 */
@@ -111,6 +106,7 @@ public enum SerialNumberStrategy {
 			return Long.parseLong(sn);
 		}
 	},
+
 	/**
 	 * 3位数字
 	 */
@@ -129,6 +125,7 @@ public enum SerialNumberStrategy {
 			}
 		}
 	},
+
 	/**
 	 * 4位数字
 	 */
@@ -147,6 +144,28 @@ public enum SerialNumberStrategy {
 			}
 		}
 	},
+
+	/**
+	 * 4位数字
+	 */
+	PROBLEM_NUMBER3() {
+		private static final String PREFIX = "P";
+
+		@Override
+		public String encode(Long number) {
+			return String.format("P%03d", number);
+		}
+
+		@Override
+		public Long decode(String sn) {
+			try {
+				return Long.parseLong(sn.replaceFirst(PREFIX, ""));
+			} catch (NumberFormatException e) {
+				return 0L;
+			}
+		}
+	},
+
 	/**
 	 * 5位数字
 	 */

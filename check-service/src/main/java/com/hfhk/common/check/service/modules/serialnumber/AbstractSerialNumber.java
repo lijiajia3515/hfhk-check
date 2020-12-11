@@ -1,4 +1,4 @@
-package com.hfhk.common.check.service.modules.serial;
+package com.hfhk.common.check.service.modules.serialnumber;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,32 +13,35 @@ import java.util.stream.IntStream;
 /**
  * 抽象编码策略
  */
-public abstract class AbstractSerialNumberStrategy {
+public abstract class AbstractSerialNumber implements SerialNumber{
 
 	@Getter
 	protected static final String delimiter = "-";
 
 	@Setter
-	protected SerialNumberStrategySettings settings;
+	protected SerialNumberSettings settings;
 
-	protected AbstractSerialNumberStrategy() {
-		settings = SerialNumberStrategySettings.builder().defaultStrategy(SerialNumberStrategy.Number).build();
+	protected AbstractSerialNumber() {
+		settings = SerialNumberSettings.builder().defaultStrategy(SerialNumberStrategy.Number).build();
 	}
 
-	protected AbstractSerialNumberStrategy(SerialNumberStrategySettings settings) {
+	protected AbstractSerialNumber(SerialNumberSettings settings) {
 		this.settings = settings;
 	}
 
+	@Override
 	public String encode(List<Long> serialNumber, String delimiter) {
 		return IntStream.range(0, serialNumber.size())
 			.mapToObj(x -> settings.strategy(x).encode(serialNumber.get(x)))
 			.collect(Collectors.joining(delimiter));
 	}
 
+	@Override
 	public String encode(List<Long> serialNumber) {
 		return encode(serialNumber, delimiter);
 	}
 
+	@Override
 	public List<Long> decode(String sn, String delimiter) {
 		List<String> source = Optional.ofNullable(sn)
 			.map(x -> Arrays.asList(x.split(delimiter)))
@@ -51,6 +54,7 @@ public abstract class AbstractSerialNumberStrategy {
 			.collect(Collectors.toList());
 	}
 
+	@Override
 	public List<Long> decode(String sn) {
 		return decode(sn, delimiter);
 	}

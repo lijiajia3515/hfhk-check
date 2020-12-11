@@ -1,4 +1,4 @@
-package com.hfhk.common.check.service.modules.serial;
+package com.hfhk.common.check.service.modules.serialnumber;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SerialNumberStrategySettings {
+public class SerialNumberSettings {
 	/**
 	 * 分隔符
 	 */

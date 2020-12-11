@@ -16,6 +16,10 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ProblemModifyRequest {
+	/**
+	 * id
+	 */
+	private String id;
 
 	/**
 	 * 检查体系
