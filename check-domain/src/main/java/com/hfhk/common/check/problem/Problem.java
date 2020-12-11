@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -50,7 +51,8 @@ public class Problem {
 	@Builder.Default
 	private Integer score = 0;
 
-	private List<ProblemRule> rules;
+	@Builder.Default
+	private List<ProblemRule> rules = Collections.emptyList();
 
 	/**
 	 * 排序值
