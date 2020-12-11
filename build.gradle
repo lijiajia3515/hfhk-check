@@ -11,6 +11,7 @@ buildscript {
     hutoolVersion = '5.3.10'
     mybatisVersion = '3.4.0'
     easyexcelVersion = '2.2.5'
+
     // tool variable
     versionRelease = !version.endsWith('SNAPSHOT')
   }

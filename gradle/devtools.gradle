@@ -1,9 +1,9 @@
 // dev config
 configurations {
-   developmentOnly
-   runtimeClasspath {
-     extendsFrom developmentOnly
-   }
+  developmentOnly
+  runtimeClasspath {
+    extendsFrom developmentOnly
+  }
 }
 
 dependencies {
