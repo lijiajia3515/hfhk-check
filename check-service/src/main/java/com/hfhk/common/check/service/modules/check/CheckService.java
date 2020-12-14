@@ -3,6 +3,8 @@ package com.hfhk.common.check.service.modules.check;
 import com.hfhk.cairo.core.page.Page;
 import com.hfhk.cairo.core.tree.TreeConverter;
 import com.hfhk.common.check.check.Check;
+import com.hfhk.common.check.service.domain.mongo.CheckMongoV1;
+import com.hfhk.common.check.service.domain.mongo.Mongo;
 import com.hfhk.common.check.service.modules.serialnumber.SerialNumber;
 import com.hfhk.common.check.service.modules.serialnumber.SerialNumberService;
 import com.hfhk.common.check.service.modules.serialnumber.StandardCheckSerialNumber;
@@ -19,7 +21,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static com.hfhk.common.check.service.modules.Constants.DELIMITER;
-import static com.hfhk.common.check.service.modules.check.CheckConstants.MONGO_COLLECTION_CHECK;
 
 @Service
 public class CheckService {
@@ -39,7 +40,7 @@ public class CheckService {
 	 * @return check
 	 */
 	public Check save(CheckSaveRequest request) {
-		CheckMongoV1 parentCheck = Optional.ofNullable(request.getParent()).map(parent -> mongoTemplate.findById(parent, CheckMongoV1.class, MONGO_COLLECTION_CHECK)).orElse(null);
+		CheckMongoV1 parentCheck = Optional.ofNullable(request.getParent()).map(parent -> mongoTemplate.findById(parent, CheckMongoV1.class, Mongo.Collection.CHECK)).orElse(null);
 		String parentId = parentCheck != null ? parentCheck.getId() : null;
 		List<Long> parentSerialNumber = parentCheck != null ? parentCheck.getSerialNumber() : Collections.emptyList();
 		long serialNumber = serialNumberService.checkGet(parentId);
@@ -48,7 +49,7 @@ public class CheckService {
 			.serialNumber(Stream.concat(parentSerialNumber.stream(), Stream.of(serialNumber)).collect(Collectors.toList()))
 			.name(request.getName())
 			.build();
-		mongoTemplate.insert(value, MONGO_COLLECTION_CHECK);
+		mongoTemplate.insert(value, Mongo.Collection.CHECK);
 		return findByCheck(value).orElseThrow();
 	}
 
@@ -63,7 +64,7 @@ public class CheckService {
 			Query.query(Criteria.where(request.getId())),
 			Update.update("name", request.getName()),
 			CheckMongoV1.class,
-			MONGO_COLLECTION_CHECK
+			Mongo.Collection.CHECK
 		);
 		return Optional.ofNullable(value)
 			.flatMap(this::findByCheck)
@@ -82,7 +83,7 @@ public class CheckService {
 
 		// optional
 		Optional.ofNullable(request.getParent()).ifPresent(field -> criteria.and("parent").is(field));
-		Optional.ofNullable(request.getSerialNumber())
+		Optional.ofNullable(request.getSn())
 			.map(SN::decode)
 			.ifPresent(serialNumber -> {
 				IntStream.range(0, serialNumber.size())
@@ -95,10 +96,8 @@ public class CheckService {
 		// sort
 		query.with(Sort.by(Sort.Order.asc("metadata.sort")));
 
-		List<CheckMongoV1> checks = mongoTemplate.find(query, CheckMongoV1.class, MONGO_COLLECTION_CHECK);
-		List<CheckMongoV1> parents = new ArrayList<>();
-		findRecursiveChild(checks.stream().map(CheckMongoV1::getParent).collect(Collectors.toSet()), parents);
-		return compose(checks, parents);
+		List<CheckMongoV1> checks = mongoTemplate.find(query, CheckMongoV1.class, Mongo.Collection.CHECK);
+		return buildChecks(checks);
 	}
 
 	/**
@@ -112,12 +111,10 @@ public class CheckService {
 		Criteria criteria = new Criteria();
 		Optional.ofNullable(request.getParent()).ifPresent(field -> criteria.and("parent").is(field));
 		Optional.ofNullable(request.getName()).ifPresent(field -> criteria.and("name").regex(field));
-		long total = mongoTemplate.count(query, MONGO_COLLECTION_CHECK);
+		long total = mongoTemplate.count(query, Mongo.Collection.CHECK);
 		query.with(request.getPage().pageable());
-		List<CheckMongoV1> checks = mongoTemplate.find(query, CheckMongoV1.class, MONGO_COLLECTION_CHECK);
-		List<CheckMongoV1> parents = new ArrayList<>();
-		findRecursiveChild(checks.stream().map(CheckMongoV1::getParent).collect(Collectors.toSet()), parents);
-		List<Check> contents = compose(checks, parents);
+		List<CheckMongoV1> checks = mongoTemplate.find(query, CheckMongoV1.class, Mongo.Collection.CHECK);
+		List<Check> contents = buildChecks(checks);
 		return new Page<>(request.getPage().pageable(), contents, total);
 	}
 
@@ -129,7 +126,7 @@ public class CheckService {
 	 */
 	public Optional<Check> findById(String id) {
 		return Optional.ofNullable(id)
-			.map(x -> mongoTemplate.findById(id, CheckMongoV1.class, MONGO_COLLECTION_CHECK))
+			.map(x -> mongoTemplate.findById(id, CheckMongoV1.class, Mongo.Collection.CHECK))
 			.flatMap(this::findByCheck);
 	}
 
@@ -143,7 +140,7 @@ public class CheckService {
 		return Optional.ofNullable(serialNumber)
 			.map(SN::decode)
 			.map(x -> Query.query(Criteria.where("serialNumber").is(x)))
-			.map(query -> mongoTemplate.findOne(query, CheckMongoV1.class, MONGO_COLLECTION_CHECK))
+			.map(query -> mongoTemplate.findOne(query, CheckMongoV1.class, Mongo.Collection.CHECK))
 			.flatMap(this::findByCheck);
 	}
 
@@ -153,8 +150,38 @@ public class CheckService {
 	 * @return find list
 	 */
 	public List<Check> findTreeAll() {
-		List<CheckMongoV1> all = mongoTemplate.findAll(CheckMongoV1.class, MONGO_COLLECTION_CHECK);
+		List<CheckMongoV1> all = mongoTemplate.findAll(CheckMongoV1.class, Mongo.Collection.CHECK);
 		return buildTree(all);
+	}
+
+	/**
+	 * 组合
+	 *
+	 * @param list    数据
+	 * @param parents 父级数据
+	 * @return 数据
+	 */
+	public List<Check> compose(Collection<CheckMongoV1> list, List<CheckMongoV1> parents) {
+		return list.stream()
+			.map(c -> {
+				List<CheckMongoV1> compose = new ArrayList<>(Collections.singleton(c));
+				findRecursiveParent(compose, parents);
+				return compose;
+			}).flatMap(compose -> this.checkMapper(compose).stream())
+			.collect(Collectors.toList());
+	}
+
+
+	/**
+	 * 构建 数据
+	 *
+	 * @param list list
+	 * @return check list
+	 */
+	public List<Check> buildTree(List<CheckMongoV1> list) {
+		ArrayList<CheckMongoV1> compose = new ArrayList<>(list);
+		List<Check> checks = compose(compose, list);
+		return TreeConverter.build(checks, null, Comparator.comparingInt(x -> 0));
 	}
 
 	/**
@@ -164,10 +191,7 @@ public class CheckService {
 	 * @return check
 	 */
 	private Optional<Check> findByCheck(CheckMongoV1 check) {
-		List<CheckMongoV1> list = new ArrayList<>(Collections.singleton(check));
-		findRecursiveChild(Collections.singleton(check.getParent()), list);
-		List<CheckMongoV1> checks = list.stream().sorted(Comparator.comparingInt(x -> x.getSerialNumber().size())).collect(Collectors.toList());
-		return checkMapper(checks);
+		return buildChecks(Collections.singleton(check)).stream().findAny();
 	}
 
 	/**
@@ -192,52 +216,36 @@ public class CheckService {
 			});
 	}
 
+	public List<Check> buildChecks(Collection<CheckMongoV1> checks) {
+		List<CheckMongoV1> parents = new ArrayList<>();
+		findRecursiveParent(checks.stream().map(CheckMongoV1::getParent).collect(Collectors.toSet()), parents);
+		return compose(checks, parents);
+	}
+
 	/**
-	 * 递归查询子集
+	 * 递归查询父级
 	 *
 	 * @param ids id
 	 * @param db  查询到的数据
 	 */
-	private void findRecursiveChild(Collection<String> ids, Collection<CheckMongoV1> db) {
+	public void findRecursiveParent(Collection<String> ids, Collection<CheckMongoV1> db) {
 		if (!ids.isEmpty()) {
 			Query query = Query.query(Criteria.where("_id").in(ids));
-			List<CheckMongoV1> list = mongoTemplate.find(query, CheckMongoV1.class, MONGO_COLLECTION_CHECK);
+			List<CheckMongoV1> list = mongoTemplate.find(query, CheckMongoV1.class, Mongo.Collection.CHECK);
 			if (!list.isEmpty()) {
 				db.addAll(list);
-				findRecursiveChild(list.stream().map(CheckMongoV1::getParent).collect(Collectors.toList()), db);
+				findRecursiveParent(
+					list.stream()
+						.map(CheckMongoV1::getParent)
+						.filter(Objects::nonNull)
+						.collect(Collectors.toList()),
+					db
+				);
 			}
 		}
 
 	}
 
-	/**
-	 * 组合
-	 *
-	 * @param list    数据
-	 * @param parents 父级数据
-	 * @return 数据
-	 */
-	private List<Check> compose(List<CheckMongoV1> list, List<CheckMongoV1> parents) {
-		return list.stream()
-			.map(c -> {
-				List<CheckMongoV1> compose = new ArrayList<>(Collections.singleton(c));
-				findRecursiveParent(compose, parents);
-				return compose;
-			}).flatMap(compose -> this.checkMapper(compose).stream())
-			.collect(Collectors.toList());
-	}
-
-	/**
-	 * 构建 数据
-	 *
-	 * @param list list
-	 * @return check list
-	 */
-	private List<Check> buildTree(List<CheckMongoV1> list) {
-		ArrayList<CheckMongoV1> compose = new ArrayList<>(list);
-		List<Check> checks = compose(compose, list);
-		return TreeConverter.build(checks, null, Comparator.comparingInt(x -> 0));
-	}
 
 	/**
 	 * 递归查询父级
@@ -245,7 +253,7 @@ public class CheckService {
 	 * @param current 当前
 	 * @param parents 所有数据
 	 */
-	private void findRecursiveParent(List<CheckMongoV1> current, List<CheckMongoV1> parents) {
+	public void findRecursiveParent(List<CheckMongoV1> current, Collection<CheckMongoV1> parents) {
 		if (current.isEmpty()) return;
 		Optional.ofNullable(current.get(0).getParent())
 			.flatMap(id -> parents.stream().filter(c -> id.equals(c.getId())).findAny())

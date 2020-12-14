@@ -1,4 +1,4 @@
-package com.hfhk.common.check.service.modules.serial;
+package com.hfhk.common.check.service.domain.mongo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +13,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 
 @Builder
+public
 class SerialMongoV1 {
 	private String id;
 	private String name;

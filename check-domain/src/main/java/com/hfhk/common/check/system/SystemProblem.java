@@ -1,5 +1,6 @@
-package com.hfhk.common.check.problem;
+package com.hfhk.common.check.system;
 
+import com.hfhk.common.check.problem.ProblemRule;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 
 @Builder
-public class Problem {
+public class SystemProblem {
 	/**
 	 * id
 	 */
@@ -24,6 +25,11 @@ public class Problem {
 	 * 编码
 	 */
 	private String sn;
+
+	/**
+	 * 检查SN
+	 */
+	private String checkSn;
 
 	/**
 	 * 标题

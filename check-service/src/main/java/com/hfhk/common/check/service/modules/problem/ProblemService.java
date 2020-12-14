@@ -3,6 +3,8 @@ package com.hfhk.common.check.service.modules.problem;
 import com.hfhk.cairo.core.page.Page;
 import com.hfhk.common.check.problem.Problem;
 import com.hfhk.common.check.problem.ProblemRule;
+import com.hfhk.common.check.service.domain.mongo.Mongo;
+import com.hfhk.common.check.service.domain.mongo.ProblemMongoV1;
 import com.hfhk.common.check.service.modules.check.CheckService;
 import com.hfhk.common.check.service.modules.serialnumber.SerialNumber;
 import com.hfhk.common.check.service.modules.serialnumber.SerialNumberService;
@@ -19,8 +21,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import static com.hfhk.common.check.service.modules.problem.ProblemConstants.MONGO_COLLECTION_PROBLEM;
 
 @Service
 public class ProblemService {
@@ -57,7 +57,7 @@ public class ProblemService {
 							.collect(Collectors.toList())
 					)
 					.build();
-				mongoTemplate.insert(problem, MONGO_COLLECTION_PROBLEM);
+				mongoTemplate.insert(problem, Mongo.Collection.PROBLEM);
 				return mapper(problem);
 			});
 	}
@@ -69,7 +69,7 @@ public class ProblemService {
 	 * @return x
 	 */
 	public Optional<Problem> modify(ProblemModifyRequest request) {
-		ProblemMongoV1 source = mongoTemplate.findById(request.getId(), ProblemMongoV1.class, MONGO_COLLECTION_PROBLEM);
+		ProblemMongoV1 source = mongoTemplate.findById(request.getId(), ProblemMongoV1.class, Mongo.Collection.PROBLEM);
 		return Optional.ofNullable(source)
 			.map(p -> {
 				if (!p.getCheck().equals(request.getCheck())) {
@@ -90,7 +90,7 @@ public class ProblemService {
 						.collect(Collectors.toList())
 					);
 				});
-				return mongoTemplate.save(p, MONGO_COLLECTION_PROBLEM);
+				return mongoTemplate.save(p, Mongo.Collection.PROBLEM);
 			})
 			.map(this::mapper);
 	}
@@ -101,7 +101,7 @@ public class ProblemService {
 				.map(p -> {
 					Criteria c = new Criteria();
 					Optional.ofNullable(p.getCheck()).ifPresent(f -> c.and("check").is(f));
-					Optional.ofNullable(p.getSerialNumber())
+					Optional.ofNullable(p.getSn())
 						.map(SN::decode)
 						.ifPresent(serialNumber -> {
 							IntStream.range(0, serialNumber.size())
@@ -113,7 +113,7 @@ public class ProblemService {
 				}).orElseGet(Criteria::new)
 		);
 		query.with(Sort.by(Sort.Order.desc("metadata.sort"), Sort.Order.desc("metadata.created.at")));
-		return mongoTemplate.find(query, ProblemMongoV1.class, MONGO_COLLECTION_PROBLEM)
+		return mongoTemplate.find(query, ProblemMongoV1.class, Mongo.Collection.PROBLEM)
 			.stream()
 			.map(this::mapper)
 			.collect(Collectors.toList());
@@ -131,11 +131,11 @@ public class ProblemService {
 				criteria.and("serialNumber").size(serialNumber.size() + 1);
 			});
 		Query query = Query.query(criteria);
-		long total = mongoTemplate.count(query, ProblemMongoV1.class, MONGO_COLLECTION_PROBLEM);
+		long total = mongoTemplate.count(query, ProblemMongoV1.class, Mongo.Collection.PROBLEM);
 
 		query.with(request.getPage().pageable());
 		query.with(Sort.by(Sort.Order.desc("metadata.sort"), Sort.Order.desc("metadata.created.at")));
-		List<Problem> contents = mongoTemplate.find(query, ProblemMongoV1.class, MONGO_COLLECTION_PROBLEM)
+		List<Problem> contents = mongoTemplate.find(query, ProblemMongoV1.class, Mongo.Collection.PROBLEM)
 			.stream()
 			.map(this::mapper)
 			.collect(Collectors.toList());
@@ -145,7 +145,7 @@ public class ProblemService {
 	private Problem mapper(ProblemMongoV1 problem) {
 		return Problem.builder()
 			.id(problem.getId())
-			.serialNumber(SN.encode(problem.getSerialNumber()))
+			.sn(SN.encode(problem.getSerialNumber()))
 			.title(problem.getTitle())
 			.description(problem.getDescription())
 			.score(problem.getScore())

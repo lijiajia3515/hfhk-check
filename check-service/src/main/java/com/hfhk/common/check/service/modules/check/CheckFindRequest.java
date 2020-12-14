@@ -14,6 +14,6 @@ import lombok.experimental.Accessors;
 @Builder
 public class CheckFindRequest {
 	private String parent;
-	private String serialNumber;
+	private String sn;
 	private String name;
 }

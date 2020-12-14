@@ -1,4 +1,4 @@
-package com.hfhk.common.check.service.modules.problem;
+package com.hfhk.common.check.service.domain.mongo;
 
 import com.hfhk.cairo.data.mongo.Metadata;
 import lombok.AllArgsConstructor;

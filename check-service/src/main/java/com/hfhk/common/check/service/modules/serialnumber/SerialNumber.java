@@ -33,4 +33,10 @@ public interface SerialNumber {
 	 */
 	List<Long> decode(String serialNumber, String delimiter);
 
+	/**
+	 * delimiter
+	 *
+	 * @return delimiter
+	 */
+	String getDelimiter();
 }

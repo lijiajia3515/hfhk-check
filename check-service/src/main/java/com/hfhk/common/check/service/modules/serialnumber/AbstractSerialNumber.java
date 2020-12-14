@@ -1,6 +1,5 @@
 package com.hfhk.common.check.service.modules.serialnumber;
 
-import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Arrays;
@@ -13,9 +12,8 @@ import java.util.stream.IntStream;
 /**
  * 抽象编码策略
  */
-public abstract class AbstractSerialNumber implements SerialNumber{
+public abstract class AbstractSerialNumber implements SerialNumber {
 
-	@Getter
 	protected static final String delimiter = "-";
 
 	@Setter
@@ -57,5 +55,10 @@ public abstract class AbstractSerialNumber implements SerialNumber{
 	@Override
 	public List<Long> decode(String sn) {
 		return decode(sn, delimiter);
+	}
+
+	@Override
+	public String getDelimiter() {
+		return delimiter;
 	}
 }

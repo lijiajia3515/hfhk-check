@@ -43,4 +43,4 @@ security:
 
 logging:
   level:
-    com.hfhk: debug
+    root: debug

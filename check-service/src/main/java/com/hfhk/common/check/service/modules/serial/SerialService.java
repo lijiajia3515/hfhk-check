@@ -1,5 +1,7 @@
 package com.hfhk.common.check.service.modules.serial;
 
+import com.hfhk.common.check.service.domain.mongo.Mongo;
+import com.hfhk.common.check.service.domain.mongo.SerialMongoV1;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -9,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static com.hfhk.common.check.service.modules.serial.SerialConstants.MONGO_COLLECTION_SERIAL;
 
 @Service
 public class SerialService {
@@ -33,7 +34,7 @@ public class SerialService {
 				update,
 				FindAndModifyOptions.options().upsert(true),
 				SerialMongoV1.class,
-				MONGO_COLLECTION_SERIAL
+				Mongo.Collection.SERIAL
 			))
 			.map(SerialMongoV1::getValue)
 			.orElse(0L);
@@ -45,6 +46,6 @@ public class SerialService {
 			.name(name)
 			.value(initValue)
 			.build();
-		mongoTemplate.insert(SerialMongoV1.class, MONGO_COLLECTION_SERIAL);
+		mongoTemplate.insert(SerialMongoV1.class, Mongo.Collection.SERIAL);
 	}
 }

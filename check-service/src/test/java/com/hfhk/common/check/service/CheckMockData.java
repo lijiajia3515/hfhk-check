@@ -1,8 +1,9 @@
-package com.hfhk.common.check.check;
+package com.hfhk.common.check.service;
 
-import com.hfhk.common.check.service.ServiceCheckApp;
+import com.hfhk.common.check.check.Check;
 import com.hfhk.common.check.service.modules.check.CheckSaveRequest;
 import com.hfhk.common.check.service.modules.check.CheckService;
+import com.hfhk.common.check.service.modules.problem.ProblemService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import java.util.stream.IntStream;
 
 @SpringBootTest(classes = ServiceCheckApp.class)
 @RunWith(SpringRunner.class)
-public class CheckMockDataTest {
+public class CheckMockData {
 
 	@Autowired
 	private CheckService checkService;
@@ -31,7 +32,7 @@ public class CheckMockDataTest {
 			.map(x -> CheckSaveRequest.builder()
 				.name(x)
 				.build())
-			.map(checkService::save)
+			.map(x-> checkService.save(x))
 			.collect(Collectors.toList());
 		List<Check> db = new ArrayList<>(list);
 		rec(db, list, 0, level, size);

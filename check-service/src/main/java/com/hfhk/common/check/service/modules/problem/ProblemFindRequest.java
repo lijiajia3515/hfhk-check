@@ -27,5 +27,5 @@ public class ProblemFindRequest {
 	/**
 	 * 编码
 	 */
-	private String serialNumber;
+	private String sn;
 }
