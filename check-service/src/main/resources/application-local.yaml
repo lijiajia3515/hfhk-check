@@ -30,7 +30,7 @@ spring:
 
 
 server:
-  port: 10011
+  port: 7822
 
 security:
   oauth2:
