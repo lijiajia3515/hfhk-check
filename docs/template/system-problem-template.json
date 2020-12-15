@@ -1,0 +1,23 @@
+{
+  "Sn": "T01-A-000-009-006-P001",
+  "CheckSn": "T01-A-000-009-006",
+  "Title": "Problem-6-1",
+  "Description": "Problem-Description-6-1",
+  "Measures": "Problem-Measures-6-1",
+  "Score": 0,
+  "Rules": [
+    {
+      "Rule": "Problem-Rule-0",
+      "Score": 0
+    },
+    {
+      "Rule": "Problem-Rule-1",
+      "Score": 1
+    },
+    {
+      "Rule": "Problem-Rule-2",
+      "Score": 2
+    }
+  ],
+  "Sort": 0
+}
