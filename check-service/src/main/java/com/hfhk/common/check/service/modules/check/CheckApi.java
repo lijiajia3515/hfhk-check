@@ -3,10 +3,7 @@ package com.hfhk.common.check.service.modules.check;
 import com.hfhk.cairo.core.page.Page;
 import com.hfhk.cairo.starter.web.handler.StatusResult;
 import com.hfhk.common.check.check.Check;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
 import java.util.List;
@@ -54,5 +51,12 @@ public class CheckApi {
 	@PermitAll
 	public Page<Check> pageFind(@RequestBody(required = false) CheckPageFindRequest request) {
 		return checkService.findPage(request);
+	}
+
+	@PostMapping("/find_id")
+	@StatusResult
+	@PermitAll
+	public Check findById(@RequestParam String id) {
+		return checkService.findById(id).orElseThrow();
 	}
 }

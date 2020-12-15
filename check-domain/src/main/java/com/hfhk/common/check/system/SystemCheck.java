@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,8 +17,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class SystemCheck {
-
-	private String id;
 	/**
 	 * system
 	 */
@@ -29,6 +28,10 @@ public class SystemCheck {
 	@Builder.Default
 	private Long version = 0L;
 
+	private LocalDateTime createdAt;
+
+	private LocalDateTime modifiedAt;
+
 	@Builder.Default
-	private List<SystemCheckItem> items = Collections.emptyList();
+	private List<SystemDistCheck> content = Collections.emptyList();
 }

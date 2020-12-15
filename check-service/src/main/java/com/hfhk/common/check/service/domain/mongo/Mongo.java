@@ -8,6 +8,8 @@ public class Mongo {
 		public static final String SERIAL = PREFIX.concat("serials");
 		public static final String PROBLEM = PREFIX.concat("problems");
 		public static final String SYSTEM_CHECK = PREFIX.concat("system_checks");
+		public static final String SYSTEM_DIST_CHECK = PREFIX.concat("system_dist_checks");
+		public static final String SYSTEM_DIST_PROBLEM = PREFIX.concat("system_dist_problems");
 
 		public static String collection(String collection) {
 			return PREFIX.concat(collection);

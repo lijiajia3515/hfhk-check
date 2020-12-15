@@ -31,7 +31,7 @@ public class Check implements TreeNode<String, Check> {
 	/**
 	 * 编码
 	 */
-	private String serialNumber;
+	private String sn;
 
 	/**
 	 * 名称

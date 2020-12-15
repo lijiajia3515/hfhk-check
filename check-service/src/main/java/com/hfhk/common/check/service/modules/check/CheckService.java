@@ -82,6 +82,7 @@ public class CheckService {
 		Criteria criteria = new Criteria();
 
 		// optional
+		Optional.ofNullable(request.getIds()).filter(x->!x.isEmpty()).ifPresent(field->criteria.and("_id").in(field));
 		Optional.ofNullable(request.getParent()).ifPresent(field -> criteria.and("parent").is(field));
 		Optional.ofNullable(request.getSn())
 			.map(SN::decode)
@@ -208,7 +209,7 @@ public class CheckService {
 				return Check.builder()
 					.id(last.getId())
 					.parent(last.getParent())
-					.serialNumber(SN.encode(last.getSerialNumber()))
+					.sn(SN.encode(last.getSerialNumber()))
 					.name(last.getName())
 					.fullName(list.stream().map(CheckMongoV1::getName).collect(Collectors.joining(DELIMITER)))
 					.sort(last.getMetadata().getSort())

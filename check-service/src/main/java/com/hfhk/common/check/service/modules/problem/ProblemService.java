@@ -39,10 +39,10 @@ public class ProblemService {
 		return checkService.findById(request.getCheck())
 			.map(check -> {
 				long last = serialNumberService.problemGet(check.getId());
-				List<Long> serialNumber = Stream.concat(SN.decode(check.getSerialNumber()).stream(), Stream.of(last))
+				List<Long> serialNumber = Stream.concat(SN.decode(check.getSn()).stream(), Stream.of(last))
 					.collect(Collectors.toList());
 				ProblemMongoV1 problem = ProblemMongoV1.builder()
-					.check(check.getParent())
+					.check(check.getId())
 					.serialNumber(serialNumber)
 					.title(request.getTitle())
 					.description(request.getDescription())
@@ -100,6 +100,7 @@ public class ProblemService {
 			Optional.ofNullable(request)
 				.map(p -> {
 					Criteria c = new Criteria();
+					Optional.ofNullable(p.getIds()).filter(x -> !x.isEmpty()).ifPresent(f -> c.and("_id").in(f));
 					Optional.ofNullable(p.getCheck()).ifPresent(f -> c.and("check").is(f));
 					Optional.ofNullable(p.getSn())
 						.map(SN::decode)

@@ -16,11 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 
 @Builder
-public class SystemProblem {
-	/**
-	 * id
-	 */
-	private String id;
+public class SystemDistProblem {
 	/**
 	 * 编码
 	 */

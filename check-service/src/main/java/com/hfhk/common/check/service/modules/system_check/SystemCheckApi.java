@@ -28,8 +28,15 @@ public class SystemCheckApi {
 	@PostMapping("/modify")
 	@StatusResult
 	@PermitAll
-	public Optional<SystemCheck> modify(SystemCheckModifyRequest request) {
-		return systemCheckService.modify(request);
+	public SystemCheck modify(SystemCheckModifyRequest request) {
+		return systemCheckService.modify(request).orElseThrow();
+	}
+
+	@PostMapping("/gen")
+	@StatusResult
+	@PermitAll
+	public SystemCheck gen(String system) {
+		return systemCheckService.gen(system).orElseThrow();
 	}
 
 	@PostMapping("/find_system")

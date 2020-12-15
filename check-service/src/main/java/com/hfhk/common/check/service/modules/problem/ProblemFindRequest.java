@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.Collection;
+
 @Data
 @Accessors(chain = true)
 
@@ -13,6 +15,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Builder
 public class ProblemFindRequest {
+	private Collection<String> ids;
 
 	/**
 	 * 关键字搜索
