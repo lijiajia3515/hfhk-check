@@ -77,7 +77,7 @@ public class SystemCheckService {
 	 * @return list system dist checks
 	 */
 	public Optional<SystemCheck> gen(String system) {
-		Query query = Query.query(Criteria.where("system").is(system));
+		Query query = Query.query(Criteria.where("metadata.deleted").is(0L).and("system").is(system));
 		return Optional.ofNullable(mongoTemplate.findOne(query, SystemCheckMongoV1.class, Mongo.Collection.SYSTEM_CHECK))
 			.map(x -> {
 				Collection<String> checkIds = Optional.ofNullable(x.getItems())
@@ -117,10 +117,10 @@ public class SystemCheckService {
 					if (check != null) {
 						List<Long> serialNumber = CHECK_SN.decode(check.getSn());
 						List<Long> parentSerialNumber = IntStream.range(0, serialNumber.size() - 1).boxed().map(serialNumber::get).collect(Collectors.toList());
-						String checkSn = Stream.of(system, check.getSn()).collect(Collectors.joining(CHECK_SN.getDelimiter()));
-						String parentCheckSn = Stream.of(system, CHECK_SN.encode(parentSerialNumber))
-							.filter(y -> !y.isEmpty())
-							.collect(Collectors.joining(CHECK_SN.getDelimiter()));
+						String checkSn = Stream.of(x.getSystem(), check.getSn()).collect(Collectors.joining(CHECK_SN.getDelimiter()));
+						String parentCheckSn = parentSerialNumber.isEmpty()
+							? null
+							: Stream.of(x.getSystem(), CHECK_SN.encode(parentSerialNumber)).collect(Collectors.joining(CHECK_SN.getDelimiter()));
 
 						SystemDistCheckMongoV1 distCheck = SystemDistCheckMongoV1.builder()
 							.system(x.getSystem())
@@ -135,8 +135,9 @@ public class SystemCheckService {
 						List<SystemDistProblemMongoV1> distCheckProblems = item.getProblems().stream()
 							.flatMap(p -> Optional.ofNullable(problemMap.get(p)).stream())
 							.map(p -> {
-								String problemSn = Stream.of(system, p.getSn()).collect(Collectors.joining(CHECK_SN.getDelimiter()));
+								String problemSn = Stream.of(x.getSystem(), p.getSn()).collect(Collectors.joining(CHECK_SN.getDelimiter()));
 								return SystemDistProblemMongoV1.builder()
+									.system(x.getSystem())
 									.sn(problemSn)
 									.check(checkSn)
 									.title(p.getTitle())
@@ -151,6 +152,7 @@ public class SystemCheckService {
 											.build())
 										.collect(Collectors.toList())
 									)
+									.metadata(Metadata.builder().sort(p.getSort()).build())
 									.build();
 							})
 							.collect(Collectors.toList());
@@ -174,11 +176,14 @@ public class SystemCheckService {
 
 	// @Transactional(rollbackFor = Exception.class)
 	public Optional<SystemCheck> findBySystem(String system) {
-		Query query = Query.query(Criteria.where("system").is(system));
+		Query query = Query.query(Criteria.where("metadata.deleted").is(0L).and("system").is(system));
 		return Optional.ofNullable(mongoTemplate.findOne(query, SystemCheckMongoV1.class, Mongo.Collection.SYSTEM_CHECK))
 			.map(sc -> {
-				List<SystemDistCheckMongoV1> distChecks = mongoTemplate.find(Query.query(Criteria.where("system").is(system)), SystemDistCheckMongoV1.class, Mongo.Collection.SYSTEM_DIST_CHECK);
-				List<SystemDistProblemMongoV1> distProblems = mongoTemplate.find(Query.query(Criteria.where("system").is(system)), SystemDistProblemMongoV1.class, Mongo.Collection.SYSTEM_DIST_PROBLEM);
+				List<SystemDistCheckMongoV1> distChecks = mongoTemplate.find(Query.query(Criteria.where("metadata.deleted").is(0L).and("system").is(system)), SystemDistCheckMongoV1.class, Mongo.Collection.SYSTEM_DIST_CHECK);
+				List<SystemDistProblemMongoV1> distProblems = mongoTemplate.find(
+					Query.query(Criteria.where("metadata.deleted").is(0L).and("system").is(system)),
+					SystemDistProblemMongoV1.class,
+					Mongo.Collection.SYSTEM_DIST_PROBLEM);
 				return buildDistCheck(sc, distChecks, distProblems);
 			});
 	}
@@ -186,7 +191,9 @@ public class SystemCheckService {
 	public SystemCheck buildDistCheck(SystemCheckMongoV1 sc, Collection<SystemDistCheckMongoV1> checks, Collection<SystemDistProblemMongoV1> problems) {
 		List<SystemDistCheck> systemDistChecks = checks.stream()
 			.map(c -> {
-				List<SystemDistProblemMongoV1> checkProblems = problems.stream().filter(x -> c.getId().equals(x.getCheck())).collect(Collectors.toList());
+				List<SystemDistProblemMongoV1> checkProblems = problems.stream()
+					.filter(x -> c.getSn().equals(x.getCheck()))
+					.collect(Collectors.toList());
 				return systemDistCheckMapper(c, checkProblems);
 			})
 			.collect(Collectors.toList());
@@ -208,7 +215,10 @@ public class SystemCheckService {
 			.fullName(check.getFullName())
 			.tag(check.getTags())
 			.sort(check.getMetadata().getSort())
-			.problems(problems.stream().map(this::systemDistProblemMapper).collect(Collectors.toList()))
+			.problems(problems.stream()
+				.map(this::systemDistProblemMapper)
+				.collect(Collectors.toList())
+			)
 			.build();
 	}
 
@@ -231,6 +241,7 @@ public class SystemCheckService {
 				)
 					.collect(Collectors.toList())
 			)
+			.sort(problem.getMetadata().getSort())
 			.build();
 	}
 }

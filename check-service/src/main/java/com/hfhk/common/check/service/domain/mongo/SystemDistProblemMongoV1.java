@@ -75,7 +75,8 @@ public class SystemDistProblemMongoV1 {
 	/**
 	 * metadata
 	 */
-	private Metadata metadata;
+	@Builder.Default
+	private Metadata metadata = new Metadata();
 
 	/**
 	 * 规则
