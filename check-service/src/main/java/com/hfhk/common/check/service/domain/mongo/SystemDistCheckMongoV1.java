@@ -1,6 +1,6 @@
 package com.hfhk.common.check.service.domain.mongo;
 
-import com.hfhk.cairo.data.mongo.Metadata;
+import com.hfhk.cairo.mongo.data.Metadata;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -57,5 +57,6 @@ public class SystemDistCheckMongoV1 {
 	/**
 	 * metadata
 	 */
-	private Metadata metadata;
+	@Builder.Default
+	private Metadata metadata = new Metadata();
 }

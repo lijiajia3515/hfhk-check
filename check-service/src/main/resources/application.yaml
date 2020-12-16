@@ -71,4 +71,4 @@ feign:
 logging:
   level:
     root: info
-    com.hfhk: debug
+    com.hfhk: info
