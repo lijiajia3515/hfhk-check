@@ -1,7 +1,7 @@
 package com.hfhk.common.check.service.modules.system_check;
 
 import com.hfhk.cairo.core.tree.TreeConverter;
-import com.hfhk.cairo.data.mongo.Metadata;
+import com.hfhk.cairo.mongo.data.Metadata;
 import com.hfhk.common.check.check.Check;
 import com.hfhk.common.check.problem.Problem;
 import com.hfhk.common.check.problem.ProblemRule;
