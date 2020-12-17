@@ -1,5 +1,4 @@
 // dependency-management config
-
 apply plugin: 'io.spring.dependency-management'
 
 dependencyManagement {

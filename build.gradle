@@ -9,12 +9,6 @@ plugins {
 
 allprojects {
   apply from: "${rootDir}/gradle/repositories.gradle"
-  ext {
-
-    // tool variable
-    versionRelease = !version.endsWith('SNAPSHOT')
-  }
-
   tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
   }
