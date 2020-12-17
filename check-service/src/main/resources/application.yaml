@@ -26,7 +26,8 @@ spring:
     mongodb:
       authentication-database: cairo
       database: cairo-system
-      grid-fs-database: cairo-system
+      gridfs:
+        database: cairo-system
   cloud:
     nacos:
       discovery:

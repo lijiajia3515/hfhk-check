@@ -7,8 +7,8 @@ spring:
       password: ${MONGO_PASSWORD:Hfhk-cairo-!@#-1230.}
       authentication-database: ${MONGO_AUTHENTICATION_DATABSE:cairo}
       database: ${MONGO_DATABSE:cairo-system}
-      grid-fs-database: ${MONGO_GRID_DATABSE:cairo-system}
-      auto-index-creation: true
+      gridfs:
+        database: ${MONGO_GRID_DATABSE:cairo-system}
 
 
   security:
@@ -45,4 +45,4 @@ logging:
   level:
     com.hfhk: debug
   file:
-    name: /hfhk/cairo/system/service/logs/hfhk.log
+    name: /hfhk/check/service/logs/hfhk.log

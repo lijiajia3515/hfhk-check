@@ -11,10 +11,9 @@ import com.hfhk.common.check.service.modules.problem.ProblemService;
 import com.hfhk.common.check.service.modules.system_check.SystemCheckSaveRequest;
 import com.hfhk.common.check.service.modules.system_check.SystemCheckService;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @SpringBootTest(classes = ServiceCheckApp.class)
-@RunWith(SpringRunner.class)
+@AutoConfigureMockMvc
 public class CheckMockData {
 
 	@Autowired
@@ -45,7 +44,7 @@ public class CheckMockData {
 			.map(x -> CheckSaveRequest.builder()
 				.name(x)
 				.build())
-			.map(x-> checkService.save(x))
+			.map(x -> checkService.save(x))
 			.collect(Collectors.toList());
 		List<Check> db = new ArrayList<>(list);
 		rec(db, list, 0, level, size);
@@ -69,7 +68,7 @@ public class CheckMockData {
 						.score(1)
 						.rules(
 							IntStream.range(0, 3)
-								.mapToObj(x -> ProblemRule.builder().rule("Problem-Rule-" + x+"").score(x).build())
+								.mapToObj(x -> ProblemRule.builder().rule("Problem-Rule-" + x + "").score(x).build())
 								.collect(Collectors.toList())
 						)
 						.build())).collect(Collectors.toList());

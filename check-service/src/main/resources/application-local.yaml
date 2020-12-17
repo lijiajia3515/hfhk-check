@@ -21,12 +21,14 @@ spring:
     mongodb:
       host: 192.168.30.21
       port: 27017
-      username: cairo
-      password: Hfhk-cairo-!@#-1230.
+      username: hfhk
+      password: Hfhk.1320.
       authentication-database: cairo
-      database: cairo-system
-      grid-fs-database: cairo-system
+      database: hfhk-check
       auto-index-creation: true
+      gridfs:
+        database: hfhk-check
+      #field-naming-strategy: com.hfhk.cairo.mongo.strategy.UpperCamelCaseFieldNamingStrategy
 
 
 server:

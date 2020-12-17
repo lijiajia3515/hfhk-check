@@ -10,15 +10,6 @@ plugins {
 allprojects {
   apply from: "${rootDir}/gradle/repositories.gradle"
   ext {
-    javaVersion = 11
-
-    springVersion = '5.2.9.RELEASE'
-    springBootVersion = '2.4.1'
-    springCloudVersion = 'Hoxton.SR8'
-    springCloudAlibabaVersion = '2.2.2.RELEASE'
-
-    cairoVersion = '0.1.0-SNAPSHOT'
-    hutoolVersion = '5.3.10'
 
     // tool variable
     versionRelease = !version.endsWith('SNAPSHOT')
