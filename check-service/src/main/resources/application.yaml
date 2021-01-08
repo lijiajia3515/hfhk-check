@@ -22,17 +22,6 @@ spring:
     multipart:
       max-file-size: 1GB
       max-request-size: 1GB
-  data:
-    mongodb:
-      authentication-database: cairo
-      database: cairo-system
-      gridfs:
-        database: cairo-system
-  cloud:
-    nacos:
-      discovery:
-        metadata:
-          version: v1
 
 server:
   http2:

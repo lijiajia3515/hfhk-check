@@ -101,19 +101,19 @@ public class ProblemService {
 				.map(p -> {
 					Criteria c = new Criteria();
 					Optional.ofNullable(p.getIds()).filter(x -> !x.isEmpty()).ifPresent(f -> c.and("_id").in(f));
-					Optional.ofNullable(p.getCheck()).ifPresent(f -> c.and("check").is(f));
+					Optional.ofNullable(p.getCheck()).ifPresent(f -> c.and("Check").is(f));
 					Optional.ofNullable(p.getSn())
 						.map(SN::decode)
 						.ifPresent(serialNumber -> {
 							IntStream.range(0, serialNumber.size())
-								.mapToObj(x -> Criteria.where("serialNumber." + x).is(serialNumber.get(x)))
+								.mapToObj(x -> Criteria.where("SerialNumber." + x).is(serialNumber.get(x)))
 								.forEach(c::andOperator);
-							c.and("serialNumber").size(serialNumber.size() + 1);
+							c.and("SerialNumber").size(serialNumber.size() + 1);
 						});
 					return c;
 				}).orElseGet(Criteria::new)
 		);
-		query.with(Sort.by(Sort.Order.desc("metadata.sort"), Sort.Order.desc("metadata.created.at")));
+		query.with(Sort.by(Sort.Order.desc("Metadata.sort"), Sort.Order.desc("Metadata.Created.At")));
 		return mongoTemplate.find(query, ProblemMongoV1.class, Mongo.Collection.PROBLEM)
 			.stream()
 			.map(this::mapper)
@@ -122,20 +122,20 @@ public class ProblemService {
 
 	public Page<Problem> find(ProblemPageFindRequest request) {
 		Criteria criteria = new Criteria();
-		Optional.ofNullable(request.getCheck()).ifPresent(f -> criteria.and("check").is(f));
+		Optional.ofNullable(request.getCheck()).ifPresent(f -> criteria.and("Check").is(f));
 		Optional.ofNullable(request.getSerialNumber())
 			.map(SN::decode)
 			.ifPresent(serialNumber -> {
 				IntStream.range(0, serialNumber.size())
-					.mapToObj(x -> Criteria.where("serialNumber." + x).is(serialNumber.get(x)))
+					.mapToObj(x -> Criteria.where("SerialNumber." + x).is(serialNumber.get(x)))
 					.forEach(criteria::andOperator);
-				criteria.and("serialNumber").size(serialNumber.size() + 1);
+				criteria.and("SerialNumber").size(serialNumber.size() + 1);
 			});
 		Query query = Query.query(criteria);
 		long total = mongoTemplate.count(query, ProblemMongoV1.class, Mongo.Collection.PROBLEM);
 
 		query.with(request.getPage().pageable());
-		query.with(Sort.by(Sort.Order.desc("metadata.sort"), Sort.Order.desc("metadata.created.at")));
+		query.with(Sort.by(Sort.Order.desc("Metadata.sort"), Sort.Order.desc("Metadata.Created.At")));
 		List<Problem> contents = mongoTemplate.find(query, ProblemMongoV1.class, Mongo.Collection.PROBLEM)
 			.stream()
 			.map(this::mapper)

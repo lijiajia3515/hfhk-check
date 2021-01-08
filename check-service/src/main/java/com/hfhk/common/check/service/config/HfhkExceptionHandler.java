@@ -23,6 +23,7 @@ public class HfhkExceptionHandler {
 	@ExceptionHandler(StatusException.class)
 	@ResponseStatus(HttpStatus.OK)
 	public Result<Object> statusException(StatusException e, HttpServletRequest request, HttpServletResponse response) {
+		e.printStackTrace();
 		log.info("[Exception] url-> [{}]", request.getRequestURI());
 		HttpStatus status = (e.getStatus().isSuccess()) ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR;
 		response.setStatus(status.value());
@@ -32,6 +33,7 @@ public class HfhkExceptionHandler {
 	@ExceptionHandler(RuntimeException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public Result<Object> runtimeException(RuntimeException e, HttpServletRequest request) {
+		e.printStackTrace();
 		log.info("[RuntimeException] url-> [{}]", request.getRequestURI());
 		return StatusResult.buildFailed();
 	}
@@ -39,6 +41,7 @@ public class HfhkExceptionHandler {
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public Result<Object> httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e, HttpServletRequest request){
+		e.printStackTrace();
 		log.info("[HttpRequestMethodNotSupportedException] url-> [{}]", request.getRequestURI());
 		return new StatusResult<>(false, Status.Failed.getCode(), e.getMessage(), e.getMethod());
 	}
@@ -46,6 +49,7 @@ public class HfhkExceptionHandler {
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(Exception.class)
 	public Result<Object> exception(Exception e, HttpServletRequest request) {
+		e.printStackTrace();
 		log.info("[Exception] url-> [{}]", request.getRequestURI());
 		return StatusResult.buildUnknown();
 	}

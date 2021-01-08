@@ -7,7 +7,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients(
-	basePackages = {"com.hfhk.cairo.*.client"}
+	basePackages = {"com.hfhk.*.client"}
 )
 @EnableDiscoveryClient
 public class ServiceCheckApp {

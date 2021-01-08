@@ -23,10 +23,10 @@ public class SerialService {
 	public long next(String key) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(key));
-		query.fields().include("value");
+		query.fields().include("Value");
 
 		Update update = new Update();
-		update.inc("value");
+		update.inc("Value");
 
 		return Optional.ofNullable(
 			mongoTemplate.findAndModify(

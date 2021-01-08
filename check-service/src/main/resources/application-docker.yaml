@@ -3,12 +3,12 @@ spring:
     mongodb:
       host: ${MONGO_HOST:localhost}
       port: ${MONGO_PORT:27017}
-      username: ${MONGO_USERNAME:cairo}
-      password: ${MONGO_PASSWORD:Hfhk-cairo-!@#-1230.}
-      authentication-database: ${MONGO_AUTHENTICATION_DATABSE:cairo}
-      database: ${MONGO_DATABSE:cairo-system}
+      username: ${MONGO_USERNAME:hfhk}
+      password: ${MONGO_PASSWORD:Hfhk.1320.}
+      authentication-database: ${MONGO_AUTHENTICATION_DATABSE:hfhk}
+      database: ${MONGO_DATABSE:hfhk-check}
       gridfs:
-        database: ${MONGO_GRID_DATABSE:cairo-system}
+        database: ${MONGO_GRIDFS_DATABSE:hfhk-check}
 
 
   security:

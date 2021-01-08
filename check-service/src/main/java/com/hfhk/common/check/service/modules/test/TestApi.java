@@ -1,10 +1,18 @@
 package com.hfhk.common.check.service.modules.test;
 
+import cn.hutool.core.util.IdUtil;
 import com.hfhk.cairo.core.exception.UnknownStatusException;
 import com.hfhk.cairo.starter.web.handler.StatusResult;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -35,6 +43,69 @@ public class TestApi {
 	@PermitAll
 	public Object exception2(@RequestBody Map<String, String> x) {
 		return x;
+	}
+
+	@GetMapping("/auth")
+	@StatusResult
+	@PreAuthorize("isAuthenticated()")
+	public Authentication auth(Authentication authentication) {
+		return authentication;
+	}
+
+	@GetMapping("/2")
+	@StatusResult
+	@PermitAll
+	public Object a(HttpServletRequest request) {
+		return request.getSession(false).getAttribute(HttpSessionOAuth2AuthorizationRequestRepository.class
+			.getName() + ".AUTHORIZATION_REQUEST");
+	}
+
+	@GetMapping("/session1")
+	@StatusResult
+	@PermitAll
+	public void sessionA(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		request.getSession(false).setAttribute("A", IdUtil.objectId());
+		System.out.println("1-" + request.getSession(false).getAttribute("A"));
+		response.sendRedirect("http://localhost:7822/test/session2");
+	}
+
+	@GetMapping("/session2")
+	@StatusResult
+	@PermitAll
+	public void sessionB(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		System.out.println("2-" + request.getSession(false).getAttribute("A"));
+		response.sendRedirect("http://localhost:7822/test/session1");
+	}
+
+	@GetMapping("/session")
+	@StatusResult
+	@PermitAll
+	public Object session(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		HttpSession session = request.getSession();
+		System.out.println("SESSION: " + session.getId());
+		request.getSession().setAttribute("A", IdUtil.objectId());
+		System.out.println("SESSION-A: " + request.getSession(false).getAttribute("A"));
+		return request.getSession().getAttribute("A");
+	}
+
+	@GetMapping("/session21")
+	@StatusResult
+	@PermitAll
+	public void session21(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		HttpSession session = request.getSession(false);
+		System.out.println("SESSION: " + session.getId());
+		System.out.println("SESSION-A: " + session.getAttribute("A"));
+		response.sendRedirect("http://localhost:7823/test/session22");
+	}
+
+	@GetMapping("/session22")
+	@StatusResult
+	@PermitAll
+	public void session22(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		HttpSession session = request.getSession(false);
+		System.out.println("SESSION: " + session.getId());
+		System.out.println("SESSION-A: " + session.getAttribute("A"));
+		response.sendRedirect("http://127.0.0.1:7822/test/session21");
 	}
 
 }

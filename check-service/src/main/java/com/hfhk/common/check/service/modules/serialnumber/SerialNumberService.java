@@ -21,12 +21,12 @@ public class SerialNumberService {
 	 * @return 号
 	 */
 	public long checkGet(String id) {
-		String key = String.format(SERIAL_KEY.concat("-Check-%s"), Optional.ofNullable(id).orElse("default"));
+		String key = String.format(SERIAL_KEY.concat("-Check-%s"), Optional.ofNullable(id).orElse("Default"));
 		return serialService.next(key);
 	}
 
 	public long problemGet(String id) {
-		String key = String.format(SERIAL_KEY.concat("-Problem-%s"), Optional.ofNullable(id).orElse("default"));
+		String key = String.format(SERIAL_KEY.concat("-Problem-%s"), Optional.ofNullable(id).orElse("Default"));
 		return serialService.next(key);
 	}
 

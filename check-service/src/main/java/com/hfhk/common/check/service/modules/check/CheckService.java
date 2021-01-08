@@ -62,7 +62,7 @@ public class CheckService {
 	public Check modify(CheckModifyRequest request) {
 		CheckMongoV1 value = mongoTemplate.findAndModify(
 			Query.query(Criteria.where(request.getId())),
-			Update.update("name", request.getName()),
+			Update.update("Name", request.getName()),
 			CheckMongoV1.class,
 			Mongo.Collection.CHECK
 		);
@@ -83,19 +83,19 @@ public class CheckService {
 
 		// optional
 		Optional.ofNullable(request.getIds()).filter(x->!x.isEmpty()).ifPresent(field->criteria.and("_id").in(field));
-		Optional.ofNullable(request.getParent()).ifPresent(field -> criteria.and("parent").is(field));
+		Optional.ofNullable(request.getParent()).ifPresent(field -> criteria.and("Parent").is(field));
 		Optional.ofNullable(request.getSn())
 			.map(SN::decode)
 			.ifPresent(serialNumber -> {
 				IntStream.range(0, serialNumber.size())
-					.mapToObj(x -> Criteria.where("serialNumber." + x).is(serialNumber.get(x)))
+					.mapToObj(x -> Criteria.where("SerialNumber." + x).is(serialNumber.get(x)))
 					.forEach(criteria::andOperator);
-				criteria.and("serialNumber").size(serialNumber.size() + 1);
+				criteria.and("SerialNumber").size(serialNumber.size() + 1);
 			});
 		Optional.ofNullable(request.getName()).ifPresent(field -> criteria.and("name").regex(field));
 
 		// sort
-		query.with(Sort.by(Sort.Order.asc("metadata.sort")));
+		query.with(Sort.by(Sort.Order.asc("Metadata.Sort")));
 
 		List<CheckMongoV1> checks = mongoTemplate.find(query, CheckMongoV1.class, Mongo.Collection.CHECK);
 		return buildChecks(checks);
@@ -110,8 +110,8 @@ public class CheckService {
 	public Page<Check> findPage(CheckPageFindRequest request) {
 		Query query = new Query();
 		Criteria criteria = new Criteria();
-		Optional.ofNullable(request.getParent()).ifPresent(field -> criteria.and("parent").is(field));
-		Optional.ofNullable(request.getName()).ifPresent(field -> criteria.and("name").regex(field));
+		Optional.ofNullable(request.getParent()).ifPresent(field -> criteria.and("Parent").is(field));
+		Optional.ofNullable(request.getName()).ifPresent(field -> criteria.and("Name").regex(field));
 		long total = mongoTemplate.count(query, Mongo.Collection.CHECK);
 		query.with(request.getPage().pageable());
 		List<CheckMongoV1> checks = mongoTemplate.find(query, CheckMongoV1.class, Mongo.Collection.CHECK);
@@ -140,7 +140,7 @@ public class CheckService {
 	public Optional<Check> findBySerialNumber(String serialNumber) {
 		return Optional.ofNullable(serialNumber)
 			.map(SN::decode)
-			.map(x -> Query.query(Criteria.where("serialNumber").is(x)))
+			.map(x -> Query.query(Criteria.where("SerialNumber").is(x)))
 			.map(query -> mongoTemplate.findOne(query, CheckMongoV1.class, Mongo.Collection.CHECK))
 			.flatMap(this::findByCheck);
 	}

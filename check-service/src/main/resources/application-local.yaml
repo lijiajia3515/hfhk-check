@@ -3,7 +3,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://127.0.0.1:10000/.well-known/jwks.json
+          jwk-set-uri: http://auth.hfhksoft.com/oauth2/jwks
   cloud:
     nacos:
       server-addr: 192.168.30.21:8848
@@ -19,29 +19,25 @@ spring:
 
   data:
     mongodb:
+      auto-index-creation: true
+      field-naming-strategy: com.hfhk.cairo.mongo.strategy.UpperCamelCaseFieldNamingStrategy
+      database: hfhk-check
+      gridfs:
+        database: hfhk-check
       host: 192.168.30.21
       port: 27017
       username: hfhk
       password: Hfhk.1320.
-      authentication-database: cairo
-      database: hfhk-check
-      auto-index-creation: true
-      gridfs:
-        database: hfhk-check
-      #field-naming-strategy: com.hfhk.cairo.mongo.strategy.UpperCamelCaseFieldNamingStrategy
-
+      authentication-database: hfhk
+  session:
+    timeout: 12h
+    store-type: none
 
 server:
   port: 7822
-
-security:
-  oauth2:
-    client:
-      id: cairo_service_system
-      client-id: cairo_service_system
-      client-secret: cairo_service_system
-      grant-type: client_credentials
-      access-token-uri: http://127.0.0.1:10000/oauth/token
+  servlet:
+    session:
+      timeout: 12H
 
 logging:
   level:

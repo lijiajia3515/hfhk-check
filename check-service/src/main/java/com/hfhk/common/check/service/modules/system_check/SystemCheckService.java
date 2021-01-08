@@ -77,7 +77,7 @@ public class SystemCheckService {
 	 * @return list system dist checks
 	 */
 	public Optional<SystemCheck> gen(String system) {
-		Query query = Query.query(Criteria.where("metadata.deleted").is(0L).and("system").is(system));
+		Query query = Query.query(Criteria.where("Metadata.Deleted").is(0L).and("System").is(system));
 		return Optional.ofNullable(mongoTemplate.findOne(query, SystemCheckMongoV1.class, Mongo.Collection.SYSTEM_CHECK))
 			.map(x -> {
 				Collection<String> checkIds = Optional.ofNullable(x.getItems())
@@ -161,10 +161,10 @@ public class SystemCheckService {
 					}
 				});
 				Query distDeleteQuery = Query.query(
-					Criteria.where("system").is(system)
-						.and("metadata.deleted").is(0L)
+					Criteria.where("System").is(system)
+						.and("Metadata.Deleted").is(0L)
 				);
-				Update distDeleteUpdate = Update.update("metadata.deleted", com.hfhk.cairo.core.Constants.SNOWFLAKE.nextId());
+				Update distDeleteUpdate = Update.update("Metadata.Deleted", com.hfhk.cairo.core.Constants.SNOWFLAKE.nextId());
 				mongoTemplate.updateMulti(distDeleteQuery, distDeleteUpdate, SystemDistCheckMongoV1.class, Mongo.Collection.SYSTEM_DIST_CHECK);
 				mongoTemplate.updateMulti(distDeleteQuery, distDeleteUpdate, SystemDistProblemMongoV1.class, Mongo.Collection.SYSTEM_DIST_PROBLEM);
 				Collection<SystemDistCheckMongoV1> savedDistChecks = mongoTemplate.insert(distChecks, Mongo.Collection.SYSTEM_DIST_CHECK);
@@ -176,12 +176,12 @@ public class SystemCheckService {
 
 	// @Transactional(rollbackFor = Exception.class)
 	public Optional<SystemCheck> findBySystem(String system) {
-		Query query = Query.query(Criteria.where("metadata.deleted").is(0L).and("system").is(system));
+		Query query = Query.query(Criteria.where("Metadata.Deleted").is(0L).and("System").is(system));
 		return Optional.ofNullable(mongoTemplate.findOne(query, SystemCheckMongoV1.class, Mongo.Collection.SYSTEM_CHECK))
 			.map(sc -> {
-				List<SystemDistCheckMongoV1> distChecks = mongoTemplate.find(Query.query(Criteria.where("metadata.deleted").is(0L).and("system").is(system)), SystemDistCheckMongoV1.class, Mongo.Collection.SYSTEM_DIST_CHECK);
+				List<SystemDistCheckMongoV1> distChecks = mongoTemplate.find(Query.query(Criteria.where("Metadata.Deleted").is(0L).and("system").is(system)), SystemDistCheckMongoV1.class, Mongo.Collection.SYSTEM_DIST_CHECK);
 				List<SystemDistProblemMongoV1> distProblems = mongoTemplate.find(
-					Query.query(Criteria.where("metadata.deleted").is(0L).and("system").is(system)),
+					Query.query(Criteria.where("Metadata.Deleted").is(0L).and("System").is(system)),
 					SystemDistProblemMongoV1.class,
 					Mongo.Collection.SYSTEM_DIST_PROBLEM);
 				return buildDistCheck(sc, distChecks, distProblems);
