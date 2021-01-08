@@ -31,7 +31,8 @@ dependencies {
   implementation 'io.github.openfeign:feign-okhttp'
 
   // discovery
-  implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery'
+  implementation 'org.springframework.cloud:spring-cloud-starter-consul-discovery'
+  // implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery'
   // implementation "com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config"
 
   // cairo

@@ -17,22 +17,35 @@ spring:
       ADJUST_DATES_TO_CONTEXT_TIME_ZONE: false
   webflux:
     format:
-      date: yyyy-MM-dd HH:mm:ss
+      date: yyyy-MM-dd
+      time: HH:mm:ss
+      date-time: yyyy-MM-dd HH:mm:ss
   servlet:
     multipart:
       max-file-size: 1GB
       max-request-size: 1GB
   data:
     mongodb:
-      authentication-database: cairo
-      database: cairo-system
+      database: ${hfhk.mongo.database:hfhk-check}
       gridfs:
-        database: cairo-system
+        database: ${hfhk.mongo.gridfs.database:hfhk-check}
+        bucket: ${hfhk.mongo.gridfs.bucket:hfhk}
+      authentication-database: hfhk
+      host: ${hfhk.mongo.host:mongo}
+      port: ${hfhk.mongo.port:27017}
+      username: ${hfhk.mongo.username:hfhk}
+      password: ${hfhk.mongo.password:Hfhk.1320.}
   cloud:
-    nacos:
+    consul:
+      host: ${hfhk.consul.host:localhost}
+      port: ${hfhk.consul.port:8500}
       discovery:
-        metadata:
-          version: v1
+        prefer-ip-address: true
+        health-check-interval: 5s
+        instance-zone: ${hfhk.consul.instance-zone:hfhk}
+        instance-group: ${hfhk.consul.instance-group:hfhk}
+        tags:
+          - v1
 
 server:
   http2:
@@ -43,7 +56,7 @@ server:
 
 feign:
   hystrix:
-    enabled: false
+    enabled: true
   okhttp:
     enabled: true
   httpclient:
@@ -56,11 +69,11 @@ feign:
     config:
       default:
         logger-level: FULL
-      serviceAuthV1AuthenticationBasicClient:
+      serviceAuthV1AuthBasicClient:
         logger-level: FULL
         request-interceptors:
           - com.hfhk.cairo.feign.interceptor.BasicRequestInterceptor
-      serviceAuthV1UserOAuthClientCredentialsClient:
+      serviceAuthV1UserClientCredentialsClient:
         logger-level: FULL
         request-interceptors:
           - com.hfhk.cairo.feign.interceptor.ClientOAuth2RequestInterceptor
@@ -68,6 +81,10 @@ feign:
         logger-level: FULL
         request-interceptors:
           - com.hfhk.cairo.feign.interceptor.RequestOAuth2RequestInterceptor
+      serviceSystemV1DictionaryClientCredentialsClient:
+        logger-level: FULL
+        request-interceptors:
+          - com.hfhk.cairo.feign.interceptor.ClientOAuth2RequestInterceptor
 
 logging:
   level:
