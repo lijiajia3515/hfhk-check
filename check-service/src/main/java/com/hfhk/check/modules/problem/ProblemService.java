@@ -166,7 +166,7 @@ public class ProblemService {
 							Criteria[] eqCriteria = IntStream.range(0, serialNumber.size())
 								.mapToObj(x -> Criteria.where(ProblemMongo.FIELD.SERIAL_NUMBER.index(x)).is(serialNumber.get(x)))
 								.toArray(Criteria[]::new);
-							snCriteria.andOperator(snCriteria);
+							snCriteria.andOperator(eqCriteria);
 							return snCriteria;
 						})
 						.toArray(Criteria[]::new)
