@@ -4,7 +4,6 @@ import com.hfhk.cairo.core.tree.TreeConverter;
 import com.hfhk.cairo.mongo.data.Metadata;
 import com.hfhk.check.modules.check.CheckService;
 import com.hfhk.check.modules.problem.ProblemService;
-import com.hfhk.check.modules.serialnumber.SerialNumber;
 import com.hfhk.check.modules.serialnumber.StandardCheckSerialNumber;
 import com.hfhk.check.modules.serialnumber.StandardProblemSerialNumber;
 import com.hfhk.check.mongo.Mongo;
@@ -13,10 +12,10 @@ import com.hfhk.check.mongo.SystemDistMongo;
 import com.hfhk.check.mongo.SystemDistProblemMongo;
 import com.hfhk.common.check.check.Check;
 import com.hfhk.common.check.check.CheckFindParam;
+import com.hfhk.common.check.dist.*;
 import com.hfhk.common.check.problem.Problem;
 import com.hfhk.common.check.problem.ProblemFindParam;
 import com.hfhk.common.check.problem.ProblemRule;
-import com.hfhk.common.check.dist.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -32,8 +31,8 @@ import java.util.stream.Stream;
 
 @Service
 public class CheckDistService {
-	private static final SerialNumber CHECK_SN = StandardCheckSerialNumber.INSTANCE;
-	private static final SerialNumber PROBLEM_SN = StandardProblemSerialNumber.INSTANCE;
+	private static final StandardCheckSerialNumber CHECK_SN = StandardCheckSerialNumber.INSTANCE;
+	private static final StandardProblemSerialNumber PROBLEM_SN = StandardProblemSerialNumber.INSTANCE;
 	private final MongoTemplate mongoTemplate;
 	private final CheckService checkService;
 	private final ProblemService problemService;

@@ -2,12 +2,12 @@ package com.hfhk.check.modules.problem;
 
 import com.hfhk.cairo.core.page.Page;
 import com.hfhk.check.modules.serialnumber.SerialNumberService;
+import com.hfhk.check.modules.serialnumber.StandardCheckSerialNumber;
 import com.hfhk.check.modules.serialnumber.StandardProblemSerialNumber;
 import com.hfhk.common.check.problem.*;
 import com.hfhk.check.mongo.Mongo;
 import com.hfhk.check.mongo.ProblemMongo;
 import com.hfhk.check.modules.check.CheckService;
-import com.hfhk.check.modules.serialnumber.SerialNumber;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -29,7 +29,8 @@ import java.util.stream.Stream;
 
 @Service
 public class ProblemService {
-	public static final SerialNumber SN = StandardProblemSerialNumber.INSTANCE;
+	public static final StandardCheckSerialNumber CHECK_SN = StandardCheckSerialNumber.INSTANCE;
+	public static final StandardProblemSerialNumber PROBLEM_SN = StandardProblemSerialNumber.INSTANCE;
 	private final SerialNumberService serialNumberService;
 	private final CheckService checkService;
 	private final MongoTemplate mongoTemplate;
@@ -45,7 +46,7 @@ public class ProblemService {
 		return checkService.findById(param.getCheck())
 			.map(check -> {
 				long last = serialNumberService.problemGet(check.getId());
-				List<Long> serialNumber = Stream.concat(SN.decode(check.getSn()).stream(), Stream.of(last))
+				List<Long> serialNumber = Stream.concat(CHECK_SN.decode(check.getSn()).stream(), Stream.of(last))
 					.collect(Collectors.toList());
 				ProblemMongo problem = ProblemMongo.builder()
 					.check(check.getId())
@@ -142,7 +143,7 @@ public class ProblemService {
 	}
 
 	public Optional<Problem> findBySn(@NotNull String sn) {
-		List<Long> serialNumber = SN.decode(sn);
+		List<Long> serialNumber = PROBLEM_SN.decode(sn);
 		Criteria criteria = Criteria.where(ProblemMongo.FIELD._ID).is(serialNumber);
 		Query query = Query.query(criteria);
 		return Optional.ofNullable(mongoTemplate.findOne(query, ProblemMongo.class, Mongo.Collection.PROBLEM)).map(this::mapper);
@@ -159,7 +160,7 @@ public class ProblemService {
 					Optional.ofNullable(p.getSn())
 						.orElse(Collections.emptySet())
 						.stream()
-						.map(SN::decode)
+						.map(PROBLEM_SN::decode)
 						.map(serialNumber -> {
 							Criteria snCriteria = Criteria.where(ProblemMongo.FIELD.SERIAL_NUMBER.SELF).size(serialNumber.size() + 1);
 							Criteria[] eqCriteria = IntStream.range(0, serialNumber.size())
@@ -188,7 +189,7 @@ public class ProblemService {
 		return Problem.builder()
 			.id(problem.getId())
 			.check(problem.getCheck())
-			.sn(SN.encode(problem.getSerialNumber()))
+			.sn(PROBLEM_SN.encode(problem.getSerialNumber()))
 			.title(problem.getTitle())
 			.description(problem.getDescription())
 			.score(problem.getScore())

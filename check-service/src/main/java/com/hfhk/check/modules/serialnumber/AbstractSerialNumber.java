@@ -12,7 +12,7 @@ import java.util.stream.IntStream;
 /**
  * 抽象编码策略
  */
-public abstract class AbstractSerialNumber implements SerialNumber {
+public abstract class AbstractSerialNumber {
 
 	protected static final String delimiter = "-";
 
@@ -27,20 +27,17 @@ public abstract class AbstractSerialNumber implements SerialNumber {
 		this.settings = settings;
 	}
 
-	@Override
-	public String encode(List<Long> serialNumber, String delimiter) {
+	protected String encode(List<Long> serialNumber, String delimiter) {
 		return IntStream.range(0, serialNumber.size())
 			.mapToObj(x -> settings.strategy(x).encode(serialNumber.get(x)))
 			.collect(Collectors.joining(delimiter));
 	}
 
-	@Override
-	public String encode(List<Long> serialNumber) {
+	protected String encode(List<Long> serialNumber) {
 		return encode(serialNumber, delimiter);
 	}
 
-	@Override
-	public List<Long> decode(String sn, String delimiter) {
+	protected List<Long> decode(String sn, String delimiter) {
 		List<String> source = Optional.ofNullable(sn)
 			.map(x -> Arrays.asList(x.split(delimiter)))
 			.stream()
@@ -52,12 +49,10 @@ public abstract class AbstractSerialNumber implements SerialNumber {
 			.collect(Collectors.toList());
 	}
 
-	@Override
-	public List<Long> decode(String sn) {
+	protected List<Long> decode(String sn) {
 		return decode(sn, delimiter);
 	}
 
-	@Override
 	public String getDelimiter() {
 		return delimiter;
 	}

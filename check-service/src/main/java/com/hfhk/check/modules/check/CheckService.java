@@ -6,6 +6,7 @@ import com.hfhk.check.modules.Constants;
 import com.hfhk.check.modules.serialnumber.SerialNumber;
 import com.hfhk.check.modules.serialnumber.SerialNumberService;
 import com.hfhk.check.modules.serialnumber.StandardCheckSerialNumber;
+import com.hfhk.check.modules.serialnumber.StandardProblemSerialNumber;
 import com.hfhk.check.mongo.CheckMongo;
 import com.hfhk.check.mongo.Mongo;
 import com.hfhk.common.check.check.Check;
@@ -27,7 +28,7 @@ import java.util.stream.Stream;
 
 @Service
 public class CheckService {
-	private static final SerialNumber SN = StandardCheckSerialNumber.INSTANCE;
+	private static final StandardCheckSerialNumber SN = StandardCheckSerialNumber.INSTANCE;
 	private final MongoTemplate mongoTemplate;
 	private final SerialNumberService serialNumberService;
 

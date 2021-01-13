@@ -148,23 +148,23 @@ public enum SerialNumberStrategy {
 	/**
 	 * 4位数字
 	 */
-	PROBLEM_NUMBER3() {
-		private static final String PREFIX = "P";
-
-		@Override
-		public String encode(Long number) {
-			return String.format("P%03d", number);
-		}
-
-		@Override
-		public Long decode(String sn) {
-			try {
-				return Long.parseLong(sn.replaceFirst(PREFIX, ""));
-			} catch (NumberFormatException e) {
-				return 0L;
-			}
-		}
-	},
+	//PROBLEM_NUMBER3() {
+	//	private static final String PREFIX = "P";
+//
+	//	@Override
+	//	public String encode(Long number) {
+	//		return String.format("P%03d", number);
+	//	}
+//
+	//	@Override
+	//	public Long decode(String sn) {
+	//		try {
+	//			return Long.parseLong(sn.replaceFirst(PREFIX, ""));
+	//		} catch (NumberFormatException e) {
+	//			return 0L;
+	//		}
+	//	}
+	//},
 
 	/**
 	 * 5位数字
