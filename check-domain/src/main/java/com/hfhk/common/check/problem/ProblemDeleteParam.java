@@ -6,29 +6,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-/**
- * 问题-规则
- */
+import java.util.Set;
+
 @Data
-@Accessors
+@Accessors(chain = true)
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProblemRule {
-
+public class ProblemDeleteParam {
 	/**
-	 * 规则
+	 * ids
 	 */
-	private String rule;
-
-	/**
-	 * 分数
-	 */
-	private Integer score;
-
-	/**
-	 * 特征值
-	 */
-	private Integer characteristicValue;
+	private Set<String> ids;
 }

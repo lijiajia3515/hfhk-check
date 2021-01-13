@@ -24,13 +24,20 @@ spring:
     multipart:
       max-file-size: 1GB
       max-request-size: 1GB
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://${hfhk.auth.server}/oauth2/jwks
   data:
     mongodb:
+      auto-index-creation: true
+      field-naming-strategy: com.hfhk.cairo.mongo.data.mapping.model.UpperCamelCaseFieldNamingStrategy
       database: ${hfhk.mongo.database:hfhk-check}
       gridfs:
         database: ${hfhk.mongo.gridfs.database:hfhk-check}
         bucket: ${hfhk.mongo.gridfs.bucket:hfhk}
-      authentication-database: hfhk
+      authentication-database: ${hfhk.mongo.authentication-database:hfhk}
       host: ${hfhk.mongo.host:mongo}
       port: ${hfhk.mongo.port:27017}
       username: ${hfhk.mongo.username:hfhk}
@@ -42,8 +49,8 @@ spring:
       discovery:
         prefer-ip-address: true
         health-check-interval: 5s
-        instance-zone: ${hfhk.consul.instance-zone:hfhk}
-        instance-group: ${hfhk.consul.instance-group:hfhk}
+        instance-zone: ${hfhk.consul.discovery.instance-zone:hfhk}
+        instance-group: ${hfhk.consul.discovery.instance-group:hfhk}
         tags:
           - v1
 
@@ -53,6 +60,7 @@ server:
   servlet:
     encoding:
       force: true
+  port: ${hfhk.server.port:80}
 
 feign:
   hystrix:
@@ -85,6 +93,15 @@ feign:
         logger-level: FULL
         request-interceptors:
           - com.hfhk.cairo.feign.interceptor.ClientOAuth2RequestInterceptor
+
+security:
+  oauth2:
+    client:
+      id: ${random.value}
+      client-id: ${hfhk.client.id:hfhk_check}
+      client-secret: ${hfhk.client.secret:hfhk_check}
+      grant-type: client_credentials
+      access-token-uri: http://${hfhk.auth.server:auth-server}/oauth2/token
 
 logging:
   level:

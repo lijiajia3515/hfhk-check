@@ -1,4 +1,4 @@
-package com.hfhk.common.check.check;
+package com.hfhk.common.check.dist;
 
 import com.hfhk.cairo.core.tree.TreeNode;
 import lombok.AllArgsConstructor;
@@ -8,57 +8,58 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Data
-@Accessors
+@Accessors(chain = true)
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Check implements TreeNode<String, Check> {
-
-	/**
-	 * id
-	 */
-	private String id;
-
-	/**
-	 * 父级
-	 */
-	private String parent;
-
+public class SystemDistCheck implements TreeNode<String, SystemDistCheck> {
 	/**
 	 * 编码
 	 */
 	private String sn;
-
+	/**
+	 * 父级
+	 */
+	private String parent;
 	/**
 	 * 名称
 	 */
 	private String name;
-
 	/**
 	 * 全名
 	 */
 	private String fullName;
-
 	/**
 	 * 标签
 	 */
-	private List<String> tags;
+	private List<String> tag;
 
 	/**
-	 * 排序值
+	 * 问题
 	 */
-	private Long sort;
-
 	@Builder.Default
-	private List<Check> subs = new ArrayList<>(0);
+	private List<SystemDistProblem> problems = Collections.emptyList();
+
+	/**
+	 * 子项
+	 */
+	@Builder.Default
+	private List<SystemDistCheck> subs = new ArrayList<>();
+
+	/**
+	 * 排序
+	 */
+	@Builder.Default
+	private Long sort = 0L;
 
 	@Override
 	public String id() {
-		return id;
+		return sn;
 	}
 
 	@Override
@@ -67,7 +68,7 @@ public class Check implements TreeNode<String, Check> {
 	}
 
 	@Override
-	public List<Check> subs() {
+	public List<SystemDistCheck> subs() {
 		return subs;
 	}
 }
