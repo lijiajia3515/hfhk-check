@@ -55,7 +55,7 @@ public class CheckImportApi {
 								Check l3Check = checkService.save(l3CheckParam);
 								return params.stream()
 									.filter(l4 -> l1.equals(l4.getL1()) && l2.equals(l4.getL2()) && l3.equals(l4.getL3()) && l4.getL4() != null)
-									.map(CheckExcelDataParam::getL3)
+									.map(CheckExcelDataParam::getL4)
 									.distinct()
 									.flatMap(l4 -> {
 										CheckSaveParam l4heckParam = CheckSaveParam.builder().parent(l3Check.getId()).name(l4).build();
@@ -63,10 +63,10 @@ public class CheckImportApi {
 
 										return params.stream()
 											.filter(l5 -> l1.equals(l5.getL1()) && l2.equals(l5.getL2()) && l3.equals(l5.getL3()) && l4.equals(l5.getL4()) && l5.getL5() != null)
-											.map(CheckExcelDataParam::getL3)
+											.map(CheckExcelDataParam::getL5)
 											.distinct()
 											.flatMap(l5 -> {
-												CheckSaveParam l5CheckParam = CheckSaveParam.builder().parent(l4Check.getId()).name(l4).build();
+												CheckSaveParam l5CheckParam = CheckSaveParam.builder().parent(l4Check.getId()).name(l5).build();
 												Check l5Check = checkService.save(l5CheckParam);
 												return params.stream()
 													.filter(problem -> l1.equals(problem.getL1()) && l2.equals(problem.getL2()) && l3.equals(problem.getL3()) && l4.equals(problem.getL4()) && l5.equals(problem.getL5()))
@@ -89,12 +89,11 @@ public class CheckImportApi {
 			})
 			.collect(Collectors.toList());
 		problems.forEach(System.out::println);
-		Map<String, Set<String>> problemMap = problems.stream().collect(Collectors.groupingBy(Problem::getId, Collectors.collectingAndThen(Collectors.toSet(), p -> p.stream().map(Problem::getId).collect(Collectors.toSet()))));
+		Map<String, Set<String>> problemMap = problems.stream().collect(Collectors.groupingBy(Problem::getCheck, Collectors.collectingAndThen(Collectors.toSet(), p -> p.stream().map(Problem::getId).collect(Collectors.toSet()))));
 		List<Check> checks = checkService.find(CheckFindParam.builder().build());
 		Set<CheckDistSaveParam.Item> items = checks.stream()
 			.map(x -> CheckDistSaveParam.Item.builder().check(x.getId()).problems(problemMap.getOrDefault(x.getId(), Collections.emptySet())).build())
 			.collect(Collectors.toSet());
-		CheckDist dist = systemDistService.save(CheckDistSaveParam.builder().system("YR").items(items).build());
-		return dist;
+		return systemDistService.save(CheckDistSaveParam.builder().system("YR").items(items).build());
 	}
 }

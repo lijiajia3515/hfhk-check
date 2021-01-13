@@ -187,6 +187,7 @@ public class ProblemService {
 	private Problem mapper(ProblemMongo problem) {
 		return Problem.builder()
 			.id(problem.getId())
+			.check(problem.getCheck())
 			.sn(SN.encode(problem.getSerialNumber()))
 			.title(problem.getTitle())
 			.description(problem.getDescription())

@@ -21,6 +21,10 @@ public class Problem {
 	 */
 	private String id;
 	/**
+	 * check
+	 */
+	private String check;
+	/**
 	 * 编码
 	 */
 	private String sn;
