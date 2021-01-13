@@ -179,8 +179,8 @@ public class ProblemService {
 	private Sort defaultSort() {
 		return Sort.by(
 			Sort.Order.asc(ProblemMongo.FIELD.METADATA.SORT),
-			Sort.Order.asc(ProblemMongo.FIELD.METADATA.LAST_MODIFIED.AT),
 			Sort.Order.asc(ProblemMongo.FIELD.METADATA.CREATED.AT),
+			Sort.Order.asc(ProblemMongo.FIELD.METADATA.LAST_MODIFIED.AT),
 			Sort.Order.asc(ProblemMongo.FIELD._ID)
 		);
 	}

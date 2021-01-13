@@ -84,7 +84,6 @@ public class CheckService {
 	public List<Check> find(CheckFindParam param) {
 		Criteria criteria = buildCriteria(param);
 		Query query = Query.query(criteria).with(defaultSort());
-
 		List<CheckMongo> checks = mongoTemplate.find(query, CheckMongo.class, Mongo.Collection.CHECK);
 		return buildChecks(checks);
 	}
@@ -174,8 +173,8 @@ public class CheckService {
 		return Sort.by(
 			Sort.Order.asc(CheckMongo.FIELD.METADATA.SORT),
 			Sort.Order.asc(CheckMongo.FIELD.SERIAL_NUMBER.SELF),
-			Sort.Order.asc(CheckMongo.FIELD.METADATA.LAST_MODIFIED.AT),
 			Sort.Order.asc(CheckMongo.FIELD.METADATA.CREATED.AT),
+			Sort.Order.asc(CheckMongo.FIELD.METADATA.LAST_MODIFIED.AT),
 			Sort.Order.asc(CheckMongo.FIELD._ID)
 		);
 	}

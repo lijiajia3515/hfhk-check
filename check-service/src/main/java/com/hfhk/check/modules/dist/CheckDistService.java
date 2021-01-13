@@ -82,15 +82,15 @@ public class CheckDistService {
 
 		Query query = Query.query(criteria);
 		return Optional.ofNullable(mongoTemplate.findOne(query, SystemDistMongo.class, Mongo.Collection.SYSTEM_DIST))
-			.map(x -> {
-				Set<String> checkIds = Optional.ofNullable(x.getItems())
+			.map(dist -> {
+				Set<String> checkIds = Optional.ofNullable(dist.getItems())
 					.map(y -> y.parallelStream()
 						.map(SystemDistMongo.Item::getCheck)
 						.collect(Collectors.toSet()
 						)
 					)
 					.orElse(Collections.emptySet());
-				Set<String> problemIds = Optional.ofNullable(x.getItems())
+				Set<String> problemIds = Optional.ofNullable(dist.getItems())
 					.map(y -> y.stream()
 						.map(SystemDistMongo.Item::getProblems)
 						.flatMap(Collection::parallelStream)
@@ -115,18 +115,18 @@ public class CheckDistService {
 				Collection<SystemDistCheckMongo> distChecks = new ArrayList<>();
 				Collection<SystemDistProblemMongo> distProblems = new ArrayList<>();
 
-				x.getItems().forEach(item -> {
+				dist.getItems().forEach(item -> {
 					Check check = checkMap.get(item.getCheck());
 					if (check != null) {
 						List<Long> serialNumber = CHECK_SN.decode(check.getSn());
 						List<Long> parentSerialNumber = IntStream.range(0, serialNumber.size() - 1).boxed().map(serialNumber::get).collect(Collectors.toList());
-						String checkSn = Stream.of(x.getSystem(), check.getSn()).collect(Collectors.joining(CHECK_SN.getDelimiter()));
+						String checkSn = Stream.of(dist.getSystem(), check.getSn()).collect(Collectors.joining(CHECK_SN.getDelimiter()));
 						String parentCheckSn = parentSerialNumber.isEmpty()
 							? null
-							: Stream.of(x.getSystem(), CHECK_SN.encode(parentSerialNumber)).collect(Collectors.joining(CHECK_SN.getDelimiter()));
+							: Stream.of(dist.getSystem(), CHECK_SN.encode(parentSerialNumber)).collect(Collectors.joining(CHECK_SN.getDelimiter()));
 
 						SystemDistCheckMongo distCheck = SystemDistCheckMongo.builder()
-							.system(x.getSystem())
+							.system(dist.getSystem())
 							.sn(checkSn)
 							.parent(parentCheckSn)
 							.name(check.getName())
@@ -138,9 +138,9 @@ public class CheckDistService {
 						List<SystemDistProblemMongo> distCheckProblems = item.getProblems().stream()
 							.flatMap(p -> Optional.ofNullable(problemMap.get(p)).stream())
 							.map(p -> {
-								String problemSn = Stream.of(x.getSystem(), p.getSn()).collect(Collectors.joining(PROBLEM_SN.getDelimiter()));
+								String problemSn = Stream.of(dist.getSystem(), p.getSn()).collect(Collectors.joining(PROBLEM_SN.getDelimiter()));
 								return SystemDistProblemMongo.builder()
-									.system(x.getSystem())
+									.system(dist.getSystem())
 									.sn(problemSn)
 									.check(checkSn)
 									.title(p.getTitle())
@@ -173,7 +173,7 @@ public class CheckDistService {
 				Collection<SystemDistCheckMongo> savedDistChecks = mongoTemplate.insert(distChecks, Mongo.Collection.SYSTEM_DIST_CHECK);
 				Collection<SystemDistProblemMongo> savedDistProblems = mongoTemplate.insert(distProblems, Mongo.Collection.SYSTEM_DIST_PROBLEM);
 
-				return buildSystemDist(x, savedDistChecks, savedDistProblems);
+				return buildSystemDist(dist, savedDistChecks, savedDistProblems);
 			});
 	}
 
@@ -245,12 +245,14 @@ public class CheckDistService {
 			.score(problem.getScore())
 			.rules(
 				problem.getRules()
-					.stream().map(x -> ProblemRule.builder()
-					.rule(x.getRule())
-					.score(x.getScore())
-					.characteristicValue(x.getCharacteristicValue())
-					.build()
-				)
+					.stream()
+					.map(x ->
+						ProblemRule.builder()
+							.rule(x.getRule())
+							.score(x.getScore())
+							.characteristicValue(x.getCharacteristicValue())
+							.build()
+					)
 					.collect(Collectors.toList())
 			)
 			.sort(problem.getMetadata().getSort())
