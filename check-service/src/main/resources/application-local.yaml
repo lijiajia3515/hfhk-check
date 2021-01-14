@@ -1,6 +1,6 @@
 hfhk:
   server:
-    port: 10030
+    port: 10020
   auth:
     server: auth.hfhksoft.com
     client:
