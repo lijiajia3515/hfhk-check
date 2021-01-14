@@ -3,10 +3,8 @@ package com.hfhk.check.modules.check;
 import com.hfhk.cairo.core.page.Page;
 import com.hfhk.cairo.core.tree.TreeConverter;
 import com.hfhk.check.modules.Constants;
-import com.hfhk.check.modules.serialnumber.SerialNumber;
 import com.hfhk.check.modules.serialnumber.SerialNumberService;
 import com.hfhk.check.modules.serialnumber.StandardCheckSerialNumber;
-import com.hfhk.check.modules.serialnumber.StandardProblemSerialNumber;
 import com.hfhk.check.mongo.CheckMongo;
 import com.hfhk.check.mongo.Mongo;
 import com.hfhk.common.check.check.Check;
@@ -68,11 +66,11 @@ public class CheckService {
 	 * @return check
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public Check modify(CheckModifyParam param) {
-		Query query = Query.query(Criteria.where(param.getId()).is(param.getId()));
+	public Optional<Check> modify(CheckModifyParam param) {
+		Query query = Query.query(Criteria.where(CheckMongo.FIELD._ID).is(param.getId()));
 		Update update = Update.update(CheckMongo.FIELD.NAME, param.getName());
 		CheckMongo value = mongoTemplate.findAndModify(query, update, CheckMongo.class, Mongo.Collection.CHECK);
-		return Optional.ofNullable(value).flatMap(this::buildCheck).orElseThrow();
+		return Optional.ofNullable(value).flatMap(this::buildCheck);
 	}
 
 	/**

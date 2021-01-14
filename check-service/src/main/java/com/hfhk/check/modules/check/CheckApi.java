@@ -20,17 +20,16 @@ public class CheckApi {
 		this.checkService = checkService;
 	}
 
-
 	@PostMapping("/Save")
 	@PermitAll
 	public Check save(@RequestBody(required = false) CheckSaveParam param) {
 		return checkService.save(param);
 	}
 
-	@PostMapping("/Modify")
+	@PutMapping("/Modify")
 	@PermitAll
 	public Check modify(@RequestBody(required = false) CheckModifyParam param) {
-		return checkService.modify(param);
+		return checkService.modify(param).orElseThrow();
 	}
 
 	@PostMapping("/Find")

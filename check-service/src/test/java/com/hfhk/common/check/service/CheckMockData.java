@@ -90,7 +90,7 @@ public class CheckMockData {
 				c1.getSubs().forEach(c2 -> {
 					itemMap.add(CheckDistSaveParam.Item.builder().check(c2.getId()).problems(Collections.emptyList()).build());
 					c2.getSubs().forEach(c3 -> {
-						List<Problem> problems = problemService.find(ProblemFindParam.builder().check(Collections.singleton(c3.getId())).build());
+						List<Problem> problems = problemService.find(ProblemFindParam.builder().checks(Collections.singleton(c3.getId())).build());
 						itemMap.add(CheckDistSaveParam.Item.builder()
 							.check(c3.getId())
 							.problems(problems.stream().map(Problem::getId).collect(Collectors.toList()))

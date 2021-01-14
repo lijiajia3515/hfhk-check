@@ -64,8 +64,8 @@ public class CheckDistService {
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public Optional<CheckDist> modify(@Validated CheckDistModifyParam request) {
-		return findBySystem(request.getSystem());
+	public Optional<CheckDist> modify(@Validated CheckDistModifyParam param) {
+		return findBySystem(param.getSystem());
 	}
 
 	/**

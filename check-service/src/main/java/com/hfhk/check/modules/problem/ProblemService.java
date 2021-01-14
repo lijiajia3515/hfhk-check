@@ -155,9 +155,9 @@ public class ProblemService {
 			.map(p -> {
 				Criteria criteria = new Criteria();
 				Optional.ofNullable(p.getIds()).filter(x -> !x.isEmpty()).ifPresent(ids -> criteria.and(ProblemMongo.FIELD._ID).in(ids));
-				Optional.ofNullable(p.getCheck()).ifPresent(f -> criteria.and(ProblemMongo.FIELD.CHECK).in(f));
+				Optional.ofNullable(p.getChecks()).ifPresent(f -> criteria.and(ProblemMongo.FIELD.CHECK).in(f));
 				Optional.of(
-					Optional.ofNullable(p.getSn())
+					Optional.ofNullable(p.getSns())
 						.orElse(Collections.emptySet())
 						.stream()
 						.map(PROBLEM_SN::decode)

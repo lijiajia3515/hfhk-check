@@ -20,12 +20,12 @@ public class ProblemFindParam extends AbstractPage<ProblemFindParam> {
 	/**
 	 * 检查体系
 	 */
-	private Set<String> check;
+	private Set<String> checks;
 
 	/**
 	 * 编码
 	 */
-	private Set<String> sn;
+	private Set<String> sns;
 
 	/**
 	 * 关键字搜索

@@ -3,9 +3,7 @@ package com.hfhk.check.modules.dist;
 import com.hfhk.common.check.dist.CheckDist;
 import com.hfhk.common.check.dist.CheckDistModifyParam;
 import com.hfhk.common.check.dist.CheckDistSaveParam;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
 import java.util.Optional;
@@ -25,7 +23,7 @@ public class CheckDistApi {
 		return distService.save(param);
 	}
 
-	@PostMapping("/Modify")
+	@PutMapping("/Modify")
 	@PermitAll
 	public CheckDist modify(CheckDistModifyParam param) {
 		return distService.modify(param).orElseThrow();
