@@ -210,6 +210,7 @@ public class DistService {
 			})
 			.collect(Collectors.toList());
 		List<DistCheck> contents = TreeConverter.build(systemDistChecks, null, Comparator.comparing(DistCheck::getSort));
+
 		return Dist.builder()
 			.system(sd.getSystem())
 			.version(sd.getMetadata().getVersion())

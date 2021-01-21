@@ -1,10 +1,8 @@
 package com.hfhk.check.modules.dist;
 
 import com.hfhk.cairo.core.page.Page;
-import com.hfhk.check.modules.serialnumber.StandardProblemSerialNumber;
 import com.hfhk.check.mongo.DistProblemMongo;
 import com.hfhk.check.mongo.Mongo;
-import com.hfhk.check.mongo.ProblemMongo;
 import com.hfhk.common.check.dist.DistProblem;
 import com.hfhk.common.check.dist.DistProblemFindParam;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -12,15 +10,12 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 public class DistProblemService {
-	private static final StandardProblemSerialNumber PROBLEM_SN = StandardProblemSerialNumber.INSTANCE;
 	private final MongoTemplate mongoTemplate;
 
 	public DistProblemService(MongoTemplate mongoTemplate) {
@@ -50,23 +45,12 @@ public class DistProblemService {
 
 	private Criteria buildFindCriteria(String system, DistProblemFindParam param) {
 		Criteria criteria = Criteria.where(DistProblemMongo.FIELD.SYSTEM).is(system);
-		Optional.ofNullable(param.getIds()).filter(x -> !x.isEmpty()).ifPresent(ids -> criteria.and(ProblemMongo.FIELD._ID).in(ids));
-		Optional.ofNullable(param.getChecks()).ifPresent(f -> criteria.and(ProblemMongo.FIELD.CHECK).in(f));
-		Optional.of(
-			Optional.ofNullable(param.getSns())
-				.orElse(Collections.emptySet())
-				.stream()
-				.map(PROBLEM_SN::decode)
-				.map(serialNumber -> {
-					Criteria snCriteria = Criteria.where(ProblemMongo.FIELD.SERIAL_NUMBER.SELF).size(serialNumber.size() + 1);
-					Criteria[] eqCriteria = IntStream.range(0, serialNumber.size())
-						.mapToObj(x -> Criteria.where(ProblemMongo.FIELD.SERIAL_NUMBER.index(x)).is(serialNumber.get(x)))
-						.toArray(Criteria[]::new);
-					snCriteria.andOperator(eqCriteria);
-					return snCriteria;
-				})
-				.toArray(Criteria[]::new))
-			.filter(x -> x.length > 0)
+		Optional.ofNullable(param.getIds()).filter(x -> !x.isEmpty())
+			.ifPresent(ids -> criteria.and(DistProblemMongo.FIELD._ID).in(ids));
+		Optional.ofNullable(param.getChecks()).filter(x -> !x.isEmpty())
+			.ifPresent(f -> criteria.and(DistProblemMongo.FIELD.CHECK).in(f));
+		Optional.ofNullable(param.getSns()).filter(x -> !x.isEmpty())
+			.map(sns -> sns.stream().map(sn -> Criteria.where(DistProblemMongo.FIELD.SN).regex(sn)).toArray(Criteria[]::new))
 			.ifPresent(criteria::orOperator);
 		return criteria;
 	}

@@ -5,6 +5,7 @@ import com.hfhk.cairo.core.tree.TreeConverter;
 import com.hfhk.check.modules.serialnumber.StandardCheckSerialNumber;
 import com.hfhk.check.mongo.CheckMongo;
 import com.hfhk.check.mongo.DistCheckMongo;
+import com.hfhk.check.mongo.DistProblemMongo;
 import com.hfhk.check.mongo.Mongo;
 import com.hfhk.common.check.dist.DistCheck;
 import com.hfhk.common.check.dist.DistCheckFindParam;
@@ -60,28 +61,16 @@ public class DistCheckService {
 	public Criteria buildFindCriteria(@NotNull String system, @Validated DistCheckFindParam param) {
 		Criteria criteria = Criteria.where(DistCheckMongo.FIELD.SYSTEM).is(system);
 
-		Optional.ofNullable(param.getIds()).ifPresent(ids -> criteria.and(CheckMongo.FIELD._ID).in(ids));
-		Optional.ofNullable(param.getParents()).ifPresent(parents -> criteria.and(CheckMongo.FIELD.PARENT).in(parents));
+		Optional.ofNullable(param.getIds()).filter(x -> !x.isEmpty())
+			.ifPresent(ids -> criteria.and(DistCheckMongo.FIELD._ID).in(ids));
+		Optional.ofNullable(param.getParents()).filter(x -> !x.isEmpty())
+			.ifPresent(parents -> criteria.and(DistCheckMongo.FIELD.PARENT).in(parents));
+		Optional.ofNullable(param.getName()).filter(x -> !x.isEmpty())
+			.ifPresent(name -> criteria.and(DistCheckMongo.FIELD.NAME).regex(name));
+		Optional.ofNullable(param.getSns()).filter(x -> !x.isEmpty())
+			.map(sns -> sns.stream().map(sn -> Criteria.where(DistProblemMongo.FIELD.SN).regex(sn)).toArray(Criteria[]::new))
+			.ifPresent(criteria::orOperator);
 
-		Optional.of(
-			Optional.ofNullable(param.getSns())
-				.orElse(Collections.emptySet())
-				.stream()
-				.filter(Objects::nonNull)
-				.map(CHECK_SN::decode)
-				.filter(x -> !x.isEmpty())
-				.map(serialNumber -> {
-					IntStream.range(0, serialNumber.size())
-						.mapToObj(x -> Criteria.where(CheckMongo.FIELD.SERIAL_NUMBER.index(x)).is(serialNumber.get(x)))
-						.forEach(criteria::andOperator);
-					criteria.and(CheckMongo.FIELD.SERIAL_NUMBER.SELF).size(serialNumber.size() + 1);
-					return criteria;
-				})
-				.collect(Collectors.toList()))
-			.filter(x -> !x.isEmpty())
-			.ifPresent(x -> criteria.orOperator(x.toArray(Criteria[]::new)));
-
-		Optional.ofNullable(param.getName()).ifPresent(name -> criteria.and(CheckMongo.FIELD.NAME).regex(name));
 		return criteria;
 	}
 }

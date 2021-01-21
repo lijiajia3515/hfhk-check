@@ -2,6 +2,10 @@ package com.hfhk.check.modules.check;
 
 import com.hfhk.check.modules.dist.DistService;
 import com.hfhk.check.modules.problem.ProblemService;
+import com.hfhk.check.mongo.DistMongo;
+import com.hfhk.check.mongo.DistProblemMongo;
+import com.hfhk.check.mongo.Mongo;
+import com.hfhk.check.mongo.SerialMongo;
 import com.hfhk.common.check.check.Check;
 import com.hfhk.common.check.check.CheckFindParam;
 import com.hfhk.common.check.check.CheckSaveParam;
@@ -9,6 +13,9 @@ import com.hfhk.common.check.problem.Problem;
 import com.hfhk.common.check.problem.ProblemSaveParam;
 import com.hfhk.common.check.dist.Dist;
 import com.hfhk.common.check.dist.DistSaveParam;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
@@ -21,17 +28,24 @@ public class CheckImportApi {
 	private final CheckService checkService;
 	private final ProblemService problemService;
 	private final DistService systemDistService;
+	private final MongoTemplate mongoTemplate;
 
-
-	public CheckImportApi(CheckService checkService, ProblemService problemService, DistService systemDistService) {
+	public CheckImportApi(CheckService checkService, ProblemService problemService, DistService systemDistService, MongoTemplate mongoTemplate) {
 		this.checkService = checkService;
 		this.problemService = problemService;
 		this.systemDistService = systemDistService;
+		this.mongoTemplate = mongoTemplate;
 	}
 
 	@PostMapping
 	@PermitAll
 	public Dist test(@RequestBody List<CheckExcelDataParam> params) {
+		String system = "YR";
+		mongoTemplate.remove(Query.query(new Criteria()), Mongo.Collection.CHECK);
+		mongoTemplate.remove(Query.query(new Criteria()), Mongo.Collection.PROBLEM);
+		mongoTemplate.remove(Query.query(Criteria.where(DistMongo.FIELD.SYSTEM).is(system)), Mongo.Collection.DIST);
+		mongoTemplate.remove(Query.query(Criteria.where(DistMongo.FIELD.SYSTEM).is(system)), Mongo.Collection.DIST_CHECK);
+		mongoTemplate.remove(Query.query(Criteria.where(DistMongo.FIELD.SYSTEM).is(system)), Mongo.Collection.DIST_PROBLEM);
 		List<Problem> problems = params.stream()
 			.map(CheckExcelDataParam::getL1)
 			.filter(Objects::nonNull)
