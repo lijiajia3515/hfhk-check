@@ -2,7 +2,7 @@ package com.hfhk.common.check.service;
 
 import com.hfhk.check.ServiceCheckApp;
 import com.hfhk.check.modules.check.CheckService;
-import com.hfhk.check.modules.dist.CheckDistService;
+import com.hfhk.check.modules.dist.DistService;
 import com.hfhk.check.modules.problem.ProblemService;
 import com.hfhk.common.check.check.Check;
 import com.hfhk.common.check.check.CheckSaveParam;
@@ -10,12 +10,13 @@ import com.hfhk.common.check.problem.Problem;
 import com.hfhk.common.check.problem.ProblemFindParam;
 import com.hfhk.common.check.problem.ProblemRule;
 import com.hfhk.common.check.problem.ProblemSaveParam;
-import com.hfhk.common.check.dist.CheckDistSaveParam;
+import com.hfhk.common.check.dist.DistSaveParam;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,7 +35,7 @@ public class CheckMockData {
 	private ProblemService problemService;
 
 	@Autowired
-	private CheckDistService distService;
+	private DistService distService;
 
 	@Test
 	public void test1() {
@@ -69,7 +70,7 @@ public class CheckMockData {
 						.score(1)
 						.rules(
 							IntStream.range(0, 3)
-								.mapToObj(x -> ProblemRule.builder().rule("Problem-Rule-" + x + "").score(x).build())
+								.mapToObj(x -> ProblemRule.builder().rule("Problem-Rule-" + x + "").score(BigDecimal.valueOf(x)).build())
 								.collect(Collectors.toList())
 						)
 						.build())).collect(Collectors.toList());
@@ -81,17 +82,17 @@ public class CheckMockData {
 	public void test3() {
 		List<Check> checkAll = checkService.findTreeAll();
 
-		List<CheckDistSaveParam.Item> itemMap = new ArrayList<>(4000);
+		List<DistSaveParam.Item> itemMap = new ArrayList<>(4000);
 
 		checkAll.forEach(c -> {
-			itemMap.add(CheckDistSaveParam.Item.builder().check(c.getId()).problems(Collections.emptyList()).build());
+			itemMap.add(DistSaveParam.Item.builder().check(c.getId()).problems(Collections.emptyList()).build());
 			c.getSubs().forEach(c1 -> {
-				itemMap.add(CheckDistSaveParam.Item.builder().check(c1.getId()).problems(Collections.emptyList()).build());
+				itemMap.add(DistSaveParam.Item.builder().check(c1.getId()).problems(Collections.emptyList()).build());
 				c1.getSubs().forEach(c2 -> {
-					itemMap.add(CheckDistSaveParam.Item.builder().check(c2.getId()).problems(Collections.emptyList()).build());
+					itemMap.add(DistSaveParam.Item.builder().check(c2.getId()).problems(Collections.emptyList()).build());
 					c2.getSubs().forEach(c3 -> {
 						List<Problem> problems = problemService.find(ProblemFindParam.builder().checks(Collections.singleton(c3.getId())).build());
-						itemMap.add(CheckDistSaveParam.Item.builder()
+						itemMap.add(DistSaveParam.Item.builder()
 							.check(c3.getId())
 							.problems(problems.stream().map(Problem::getId).collect(Collectors.toList()))
 							.build());
@@ -100,7 +101,7 @@ public class CheckMockData {
 			});
 		});
 
-		CheckDistSaveParam param = CheckDistSaveParam.builder()
+		DistSaveParam param = DistSaveParam.builder()
 			.system("T01")
 			.items(itemMap)
 			.build();

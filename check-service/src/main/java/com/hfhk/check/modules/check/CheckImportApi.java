@@ -1,14 +1,14 @@
 package com.hfhk.check.modules.check;
 
-import com.hfhk.check.modules.dist.CheckDistService;
+import com.hfhk.check.modules.dist.DistService;
 import com.hfhk.check.modules.problem.ProblemService;
 import com.hfhk.common.check.check.Check;
 import com.hfhk.common.check.check.CheckFindParam;
 import com.hfhk.common.check.check.CheckSaveParam;
 import com.hfhk.common.check.problem.Problem;
 import com.hfhk.common.check.problem.ProblemSaveParam;
-import com.hfhk.common.check.dist.CheckDist;
-import com.hfhk.common.check.dist.CheckDistSaveParam;
+import com.hfhk.common.check.dist.Dist;
+import com.hfhk.common.check.dist.DistSaveParam;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;
@@ -20,10 +20,10 @@ import java.util.stream.Collectors;
 public class CheckImportApi {
 	private final CheckService checkService;
 	private final ProblemService problemService;
-	private final CheckDistService systemDistService;
+	private final DistService systemDistService;
 
 
-	public CheckImportApi(CheckService checkService, ProblemService problemService, CheckDistService systemDistService) {
+	public CheckImportApi(CheckService checkService, ProblemService problemService, DistService systemDistService) {
 		this.checkService = checkService;
 		this.problemService = problemService;
 		this.systemDistService = systemDistService;
@@ -31,7 +31,7 @@ public class CheckImportApi {
 
 	@PostMapping
 	@PermitAll
-	public CheckDist test(@RequestBody List<CheckExcelDataParam> params) {
+	public Dist test(@RequestBody List<CheckExcelDataParam> params) {
 		List<Problem> problems = params.stream()
 			.map(CheckExcelDataParam::getL1)
 			.filter(Objects::nonNull)
@@ -91,9 +91,9 @@ public class CheckImportApi {
 		problems.forEach(System.out::println);
 		Map<String, Set<String>> problemMap = problems.stream().collect(Collectors.groupingBy(Problem::getCheck, Collectors.collectingAndThen(Collectors.toSet(), p -> p.stream().map(Problem::getId).collect(Collectors.toSet()))));
 		List<Check> checks = checkService.find(CheckFindParam.builder().build());
-		Set<CheckDistSaveParam.Item> items = checks.stream()
-			.map(x -> CheckDistSaveParam.Item.builder().check(x.getId()).problems(problemMap.getOrDefault(x.getId(), Collections.emptySet())).build())
+		Set<DistSaveParam.Item> items = checks.stream()
+			.map(x -> DistSaveParam.Item.builder().check(x.getId()).problems(problemMap.getOrDefault(x.getId(), Collections.emptySet())).build())
 			.collect(Collectors.toSet());
-		return systemDistService.save(CheckDistSaveParam.builder().system("YR").items(items).build());
+		return systemDistService.save(DistSaveParam.builder().system("YR").items(items).build());
 	}
 }

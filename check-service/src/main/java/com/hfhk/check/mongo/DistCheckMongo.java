@@ -20,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SystemDistCheckMongo {
+public class DistCheckMongo {
 	/**
 	 * id
 	 */

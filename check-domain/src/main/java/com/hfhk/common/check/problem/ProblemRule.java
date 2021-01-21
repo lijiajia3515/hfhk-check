@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.math.BigDecimal;
+
 /**
  * 问题-规则
  */
@@ -25,7 +27,7 @@ public class ProblemRule {
 	/**
 	 * 分数
 	 */
-	private Integer score;
+	private BigDecimal score;
 
 	/**
 	 * 特征值

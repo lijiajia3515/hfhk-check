@@ -19,7 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SystemDistMongo {
+public class DistMongo {
 	private String id;
 
 	private String system;

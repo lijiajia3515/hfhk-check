@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SystemDistProblem implements Serializable {
+public class DistProblem implements Serializable {
 	/**
 	 * 编码
 	 */

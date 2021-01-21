@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SystemDistCheck implements TreeNode<String, SystemDistCheck> {
+public class DistCheck implements TreeNode<String, DistCheck> {
 	/**
 	 * 编码
 	 */
@@ -43,13 +43,13 @@ public class SystemDistCheck implements TreeNode<String, SystemDistCheck> {
 	 * 问题
 	 */
 	@Builder.Default
-	private List<SystemDistProblem> problems = Collections.emptyList();
+	private List<DistProblem> problems = Collections.emptyList();
 
 	/**
 	 * 子项
 	 */
 	@Builder.Default
-	private List<SystemDistCheck> subs = new ArrayList<>();
+	private List<DistCheck> subs = new ArrayList<>();
 
 	/**
 	 * 排序
@@ -68,7 +68,7 @@ public class SystemDistCheck implements TreeNode<String, SystemDistCheck> {
 	}
 
 	@Override
-	public List<SystemDistCheck> subs() {
+	public List<DistCheck> subs() {
 		return subs;
 	}
 }

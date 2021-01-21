@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CheckDist {
+public class Dist {
 	/**
 	 * system
 	 */
@@ -33,5 +33,5 @@ public class CheckDist {
 	private LocalDateTime modifiedAt;
 
 	@Builder.Default
-	private List<SystemDistCheck> contents = Collections.emptyList();
+	private List<DistCheck> contents = Collections.emptyList();
 }

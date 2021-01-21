@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -92,7 +93,7 @@ public class ProblemMongo implements Serializable {
 		/**
 		 * 分组
 		 */
-		private Integer score;
+		private BigDecimal score;
 		/**
 		 * 特征值
 		 */

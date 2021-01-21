@@ -7,15 +7,14 @@ import com.hfhk.check.modules.problem.ProblemService;
 import com.hfhk.check.modules.serialnumber.StandardCheckSerialNumber;
 import com.hfhk.check.modules.serialnumber.StandardProblemSerialNumber;
 import com.hfhk.check.mongo.Mongo;
-import com.hfhk.check.mongo.SystemDistCheckMongo;
-import com.hfhk.check.mongo.SystemDistMongo;
-import com.hfhk.check.mongo.SystemDistProblemMongo;
+import com.hfhk.check.mongo.DistCheckMongo;
+import com.hfhk.check.mongo.DistMongo;
+import com.hfhk.check.mongo.DistProblemMongo;
 import com.hfhk.common.check.check.Check;
 import com.hfhk.common.check.check.CheckFindParam;
 import com.hfhk.common.check.dist.*;
 import com.hfhk.common.check.problem.Problem;
 import com.hfhk.common.check.problem.ProblemFindParam;
-import com.hfhk.common.check.problem.ProblemRule;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -30,28 +29,28 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @Service
-public class CheckDistService {
+public class DistService {
 	private static final StandardCheckSerialNumber CHECK_SN = StandardCheckSerialNumber.INSTANCE;
 	private static final StandardProblemSerialNumber PROBLEM_SN = StandardProblemSerialNumber.INSTANCE;
 	private final MongoTemplate mongoTemplate;
 	private final CheckService checkService;
 	private final ProblemService problemService;
 
-	public CheckDistService(MongoTemplate mongoTemplate, CheckService checkService, ProblemService problemService) {
+	public DistService(MongoTemplate mongoTemplate, CheckService checkService, ProblemService problemService) {
 		this.mongoTemplate = mongoTemplate;
 		this.checkService = checkService;
 		this.problemService = problemService;
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public CheckDist save(@Validated CheckDistSaveParam param) {
-		SystemDistMongo data = SystemDistMongo.builder()
+	public Dist save(@Validated DistSaveParam param) {
+		DistMongo data = DistMongo.builder()
 			.system(param.getSystem())
 			.items(
 				param.getItems()
 					.stream()
 					.map(x ->
-						SystemDistMongo.Item.builder()
+						DistMongo.Item.builder()
 							.check(x.getCheck())
 							.problems(x.getProblems())
 							.build()
@@ -59,12 +58,12 @@ public class CheckDistService {
 					.collect(Collectors.toList())
 			).build();
 
-		mongoTemplate.insert(data, Mongo.Collection.SYSTEM_DIST);
+		mongoTemplate.insert(data, Mongo.Collection.DIST);
 		return gen(param.getSystem()).orElseThrow();
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public Optional<CheckDist> modify(@Validated CheckDistModifyParam param) {
+	public Optional<Dist> modify(@Validated DistModifyParam param) {
 		return findBySystem(param.getSystem());
 	}
 
@@ -75,24 +74,24 @@ public class CheckDistService {
 	 * @return list system dist checks
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public Optional<CheckDist> gen(String system) {
+	public Optional<Dist> gen(String system) {
 		Criteria criteria = Criteria
-			.where(SystemDistMongo.FIELD.METADATA.DELETED).is(0L)
-			.and(SystemDistMongo.FIELD.SYSTEM).is(system);
+			.where(DistMongo.FIELD.METADATA.DELETED).is(0L)
+			.and(DistMongo.FIELD.SYSTEM).is(system);
 
 		Query query = Query.query(criteria);
-		return Optional.ofNullable(mongoTemplate.findOne(query, SystemDistMongo.class, Mongo.Collection.SYSTEM_DIST))
+		return Optional.ofNullable(mongoTemplate.findOne(query, DistMongo.class, Mongo.Collection.DIST))
 			.map(dist -> {
 				Set<String> checkIds = Optional.ofNullable(dist.getItems())
 					.map(y -> y.parallelStream()
-						.map(SystemDistMongo.Item::getCheck)
+						.map(DistMongo.Item::getCheck)
 						.collect(Collectors.toSet()
 						)
 					)
 					.orElse(Collections.emptySet());
 				Set<String> problemIds = Optional.ofNullable(dist.getItems())
 					.map(y -> y.stream()
-						.map(SystemDistMongo.Item::getProblems)
+						.map(DistMongo.Item::getProblems)
 						.flatMap(Collection::parallelStream)
 						.collect(Collectors.toSet()
 						)
@@ -112,8 +111,8 @@ public class CheckDistService {
 							.collect(Collectors.toMap(Problem::getId, z -> z))
 					)
 					.orElse(Collections.emptyMap());
-				Collection<SystemDistCheckMongo> distChecks = new ArrayList<>();
-				Collection<SystemDistProblemMongo> distProblems = new ArrayList<>();
+				Collection<DistCheckMongo> distChecks = new ArrayList<>();
+				Collection<DistProblemMongo> distProblems = new ArrayList<>();
 
 				dist.getItems().forEach(item -> {
 					Check check = checkMap.get(item.getCheck());
@@ -125,7 +124,7 @@ public class CheckDistService {
 							? null
 							: Stream.of(dist.getSystem(), CHECK_SN.encode(parentSerialNumber)).collect(Collectors.joining(CHECK_SN.getDelimiter()));
 
-						SystemDistCheckMongo distCheck = SystemDistCheckMongo.builder()
+						DistCheckMongo distCheck = DistCheckMongo.builder()
 							.system(dist.getSystem())
 							.sn(checkSn)
 							.parent(parentCheckSn)
@@ -135,11 +134,11 @@ public class CheckDistService {
 							.build();
 
 
-						List<SystemDistProblemMongo> distCheckProblems = item.getProblems().stream()
+						List<DistProblemMongo> distCheckProblems = item.getProblems().stream()
 							.flatMap(p -> Optional.ofNullable(problemMap.get(p)).stream())
 							.map(p -> {
 								String problemSn = Stream.of(dist.getSystem(), p.getSn()).collect(Collectors.joining(PROBLEM_SN.getDelimiter()));
-								return SystemDistProblemMongo.builder()
+								return DistProblemMongo.builder()
 									.system(dist.getSystem())
 									.sn(problemSn)
 									.check(checkSn)
@@ -148,7 +147,7 @@ public class CheckDistService {
 									.measures(p.getMeasures())
 									.provisions(p.getProvisions())
 									.rules(p.getRules().stream()
-										.map(r -> SystemDistProblemMongo.Rule.builder()
+										.map(r -> DistProblemMongo.Rule.builder()
 											.rule(r.getRule())
 											.score(r.getScore())
 											.characteristicValue(r.getCharacteristicValue())
@@ -164,30 +163,31 @@ public class CheckDistService {
 					}
 				});
 				Criteria deleteCriteria = Criteria
-					.where(SystemDistMongo.FIELD.METADATA.DELETED).is(0L)
-					.and(SystemDistMongo.FIELD.SYSTEM).is(system);
+					.where(DistMongo.FIELD.METADATA.DELETED).is(0L)
+					.and(DistMongo.FIELD.SYSTEM).is(system);
 				Query distDeleteQuery = Query.query(deleteCriteria);
-				Update distDeleteUpdate = Update.update(SystemDistMongo.FIELD.METADATA.DELETED, com.hfhk.cairo.core.Constants.SNOWFLAKE.nextId());
-				mongoTemplate.updateMulti(distDeleteQuery, distDeleteUpdate, SystemDistCheckMongo.class, Mongo.Collection.SYSTEM_DIST_CHECK);
-				mongoTemplate.updateMulti(distDeleteQuery, distDeleteUpdate, SystemDistProblemMongo.class, Mongo.Collection.SYSTEM_DIST_PROBLEM);
-				Collection<SystemDistCheckMongo> savedDistChecks = mongoTemplate.insert(distChecks, Mongo.Collection.SYSTEM_DIST_CHECK);
-				Collection<SystemDistProblemMongo> savedDistProblems = mongoTemplate.insert(distProblems, Mongo.Collection.SYSTEM_DIST_PROBLEM);
+				Update distDeleteUpdate = Update.update(DistMongo.FIELD.METADATA.DELETED, com.hfhk.cairo.core.Constants.SNOWFLAKE.nextId());
+				mongoTemplate.updateMulti(distDeleteQuery, distDeleteUpdate, DistCheckMongo.class, Mongo.Collection.DIST_CHECK);
+				mongoTemplate.updateMulti(distDeleteQuery, distDeleteUpdate, DistProblemMongo.class, Mongo.Collection.DIST_PROBLEM);
+				Collection<DistCheckMongo> savedDistChecks = mongoTemplate.insert(distChecks, Mongo.Collection.DIST_CHECK);
+				Collection<DistProblemMongo> savedDistProblems = mongoTemplate.insert(distProblems, Mongo.Collection.DIST_PROBLEM);
 
 				return buildSystemDist(dist, savedDistChecks, savedDistProblems);
 			});
 	}
 
-	public Optional<CheckDist> findBySystem(String system) {
+	public Optional<Dist> findBySystem(String system) {
 		Criteria criteria = Criteria
-			.where(SystemDistMongo.FIELD.METADATA.DELETED).is(0L)
-			.and(SystemDistMongo.FIELD.SYSTEM).is(system);
+			.where(DistMongo.FIELD.METADATA.DELETED).is(0L)
+			.and(DistMongo.FIELD.SYSTEM).is(system);
 		Query query = Query.query(criteria);
-		return Optional.ofNullable(mongoTemplate.findOne(query, SystemDistMongo.class, Mongo.Collection.SYSTEM_DIST))
+		return Optional.ofNullable(mongoTemplate.findOne(query, DistMongo.class, Mongo.Collection.DIST))
 			.map(sc -> {
-				Criteria checkCriteria = Criteria.where(SystemDistCheckMongo.FIELD.METADATA.DELETED).is(0L).and(SystemDistCheckMongo.FIELD.SYSTEM).is(system);
-				Query checkQuery = Query.query(checkCriteria);
-				List<SystemDistCheckMongo> distChecks = mongoTemplate.find(checkQuery, SystemDistCheckMongo.class, Mongo.Collection.SYSTEM_DIST_CHECK);
-				List<SystemDistProblemMongo> distProblems = mongoTemplate.find(checkQuery, SystemDistProblemMongo.class, Mongo.Collection.SYSTEM_DIST_PROBLEM);
+				Criteria checkCriteria = Criteria.where(DistCheckMongo.FIELD.METADATA.DELETED).is(0L).and(DistCheckMongo.FIELD.SYSTEM).is(system);
+				Query checkQuery = Query.query(checkCriteria).with(DistConstants.DEFAULT_DIST_CHECK_SORT);
+				List<DistCheckMongo> distChecks = mongoTemplate.find(checkQuery, DistCheckMongo.class, Mongo.Collection.DIST_CHECK);
+				Query problemQuery = Query.query(checkCriteria).with(DistConstants.DEFAULT_DIST_PROBLEM_SORT);
+				List<DistProblemMongo> distProblems = mongoTemplate.find(problemQuery, DistProblemMongo.class, Mongo.Collection.DIST_PROBLEM);
 				return buildSystemDist(sc, distChecks, distProblems);
 			});
 	}
@@ -200,17 +200,17 @@ public class CheckDistService {
 	 * @param problems problems
 	 * @return system dist
 	 */
-	private CheckDist buildSystemDist(SystemDistMongo sd, Collection<SystemDistCheckMongo> checks, Collection<SystemDistProblemMongo> problems) {
-		List<SystemDistCheck> systemDistChecks = checks.stream()
+	private Dist buildSystemDist(DistMongo sd, Collection<DistCheckMongo> checks, Collection<DistProblemMongo> problems) {
+		List<DistCheck> systemDistChecks = checks.stream()
 			.map(c -> {
-				List<SystemDistProblemMongo> checkProblems = problems.stream()
+				List<DistProblemMongo> checkProblems = problems.stream()
 					.filter(x -> c.getSn().equals(x.getCheck()))
 					.collect(Collectors.toList());
-				return systemDistCheckMapper(c, checkProblems);
+				return DistConverter.distCheck(c, checkProblems);
 			})
 			.collect(Collectors.toList());
-		List<SystemDistCheck> contents = TreeConverter.build(systemDistChecks, null, Comparator.comparing(SystemDistCheck::getSort));
-		return CheckDist.builder()
+		List<DistCheck> contents = TreeConverter.build(systemDistChecks, null, Comparator.comparing(DistCheck::getSort));
+		return Dist.builder()
 			.system(sd.getSystem())
 			.version(sd.getMetadata().getVersion())
 			.createdAt(sd.getMetadata().getCreated().getAt())
@@ -219,43 +219,5 @@ public class CheckDistService {
 			.build();
 	}
 
-	private SystemDistCheck systemDistCheckMapper(SystemDistCheckMongo check, List<SystemDistProblemMongo> problems) {
-		return SystemDistCheck.builder()
-			.sn(check.getSn())
-			.parent(check.getParent())
-			.name(check.getName())
-			.fullName(check.getFullName())
-			.tag(check.getTags())
-			.sort(check.getMetadata().getSort())
-			.problems(problems.stream()
-				.map(this::systemDistProblemMapper)
-				.collect(Collectors.toList())
-			)
-			.build();
-	}
 
-	private SystemDistProblem systemDistProblemMapper(SystemDistProblemMongo problem) {
-		return SystemDistProblem.builder()
-			.sn(problem.getSn())
-			.checkSn(problem.getCheck())
-			.title(problem.getTitle())
-			.description(problem.getDescription())
-			.provisions(problem.getProvisions())
-			.measures(problem.getMeasures())
-			.score(problem.getScore())
-			.rules(
-				problem.getRules()
-					.stream()
-					.map(x ->
-						ProblemRule.builder()
-							.rule(x.getRule())
-							.score(x.getScore())
-							.characteristicValue(x.getCharacteristicValue())
-							.build()
-					)
-					.collect(Collectors.toList())
-			)
-			.sort(problem.getMetadata().getSort())
-			.build();
-	}
 }

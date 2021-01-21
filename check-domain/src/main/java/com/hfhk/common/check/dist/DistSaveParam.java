@@ -6,7 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
 
 @Data
 @Accessors(chain = true)
@@ -14,24 +15,28 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CheckDistModifyParam {
+public class DistSaveParam {
 
 	private String system;
 
-	private List<Item> save;
-
-	private List<Item> delete;
-
+	@Builder.Default
+	private Collection<Item> items = Collections.emptyList();
 
 	@Data
 	@Accessors(chain = true)
-
 	@NoArgsConstructor
 	@AllArgsConstructor
 	@Builder
 	public static class Item {
+		/**
+		 * 检查
+		 */
 		private String check;
-		private List<String> problems;
-	}
 
+		/**
+		 * 问题
+		 */
+		@Builder.Default
+		private Collection<String> problems = Collections.emptyList();
+	}
 }

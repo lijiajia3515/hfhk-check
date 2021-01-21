@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,7 +21,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SystemDistProblemMongo {
+public class DistProblemMongo {
 	/**
 	 * 标识
 	 */
@@ -98,7 +99,7 @@ public class SystemDistProblemMongo {
 		/**
 		 * 分组
 		 */
-		private Integer score;
+		private BigDecimal score;
 		/**
 		 * 特征值
 		 */
