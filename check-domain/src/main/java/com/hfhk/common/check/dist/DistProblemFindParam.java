@@ -15,10 +15,6 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 public class DistProblemFindParam extends AbstractPage<DistProblemFindParam> {
-	/**
-	 * ids
-	 */
-	private Collection<String> ids;
 
 	/**
 	 * 检查体系

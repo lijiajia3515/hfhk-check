@@ -14,8 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 public class DistCheckFindParam extends AbstractPage<DistCheckFindParam> {
-	private Set<String> ids;
 	private Set<String> sns;
 	private Set<String> parents;
-	private String name;
+	private String keyword;
 }

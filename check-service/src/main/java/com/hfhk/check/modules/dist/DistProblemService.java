@@ -45,12 +45,12 @@ public class DistProblemService {
 
 	private Criteria buildFindCriteria(String system, DistProblemFindParam param) {
 		Criteria criteria = Criteria.where(DistProblemMongo.FIELD.SYSTEM).is(system);
-		Optional.ofNullable(param.getIds()).filter(x -> !x.isEmpty())
-			.ifPresent(ids -> criteria.and(DistProblemMongo.FIELD._ID).in(ids));
 		Optional.ofNullable(param.getChecks()).filter(x -> !x.isEmpty())
 			.ifPresent(f -> criteria.and(DistProblemMongo.FIELD.CHECK).in(f));
-		Optional.ofNullable(param.getSns()).filter(x -> !x.isEmpty())
+		Optional.of(Optional.ofNullable(param.getSns()).filter(x -> !x.isEmpty())
 			.map(sns -> sns.stream().map(sn -> Criteria.where(DistProblemMongo.FIELD.SN).regex(sn)).toArray(Criteria[]::new))
+			.orElse(new Criteria[0]))
+			.filter(x -> x.length > 0)
 			.ifPresent(criteria::orOperator);
 		return criteria;
 	}

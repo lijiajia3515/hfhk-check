@@ -26,7 +26,7 @@ public class DistProblem implements Serializable {
 	/**
 	 * 检查SN
 	 */
-	private String checkSn;
+	private String check;
 
 	/**
 	 * 标题

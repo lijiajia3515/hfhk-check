@@ -28,7 +28,7 @@ public class DistConverter {
 	public static DistProblem distProblem(DistProblemMongo problem) {
 		return DistProblem.builder()
 			.sn(problem.getSn())
-			.checkSn(problem.getCheck())
+			.check(problem.getCheck())
 			.title(problem.getTitle())
 			.description(problem.getDescription())
 			.provisions(problem.getProvisions())
