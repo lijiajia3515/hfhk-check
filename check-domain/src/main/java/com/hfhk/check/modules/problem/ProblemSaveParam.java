@@ -1,14 +1,11 @@
-package com.hfhk.common.check.dist;
+package com.hfhk.check.modules.problem;
 
-import com.hfhk.common.check.problem.ProblemRule;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -17,14 +14,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DistProblem implements Serializable {
-	/**
-	 * 编码
-	 */
-	private String sn;
+public class ProblemSaveParam {
 
 	/**
-	 * 检查SN
+	 * 检查体系
 	 */
 	private String check;
 
@@ -51,17 +44,10 @@ public class DistProblem implements Serializable {
 	/**
 	 * 分数
 	 */
-	@Builder.Default
-	private Integer score = 0;
-
-	@Builder.Default
-	private List<ProblemRule> rules = Collections.emptyList();
+	private Integer score;
 
 	/**
-	 * 排序值
+	 * 规则
 	 */
-	@Builder.Default
-	private Long sort = 0L;
-
-
+	private List<ProblemRule> rules;
 }

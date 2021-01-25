@@ -1,6 +1,6 @@
 package com.hfhk.check.modules.check;
 
-import com.hfhk.common.check.problem.ProblemRule;
+import com.hfhk.check.modules.problem.ProblemRule;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.hfhk.common.check.dist;
+package com.hfhk.check.modules.dist;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,10 +1,6 @@
 package com.hfhk.check.modules.check;
 
 import com.hfhk.cairo.core.page.Page;
-import com.hfhk.common.check.check.Check;
-import com.hfhk.common.check.check.CheckFindParam;
-import com.hfhk.common.check.check.CheckModifyParam;
-import com.hfhk.common.check.check.CheckSaveParam;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;

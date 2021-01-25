@@ -1,10 +1,9 @@
-package com.hfhk.common.check.dist;
+package com.hfhk.check.modules.dist;
 
 import com.hfhk.cairo.core.page.AbstractPage;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.util.Collection;
 import java.util.Set;
 
 @Data

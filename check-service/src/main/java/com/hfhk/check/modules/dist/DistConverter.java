@@ -2,9 +2,7 @@ package com.hfhk.check.modules.dist;
 
 import com.hfhk.check.mongo.DistCheckMongo;
 import com.hfhk.check.mongo.DistProblemMongo;
-import com.hfhk.common.check.dist.DistCheck;
-import com.hfhk.common.check.dist.DistProblem;
-import com.hfhk.common.check.problem.ProblemRule;
+import com.hfhk.check.modules.problem.ProblemRule;
 
 import java.util.List;
 import java.util.stream.Collectors;

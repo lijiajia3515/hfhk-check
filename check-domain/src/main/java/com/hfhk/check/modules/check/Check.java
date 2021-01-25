@@ -1,4 +1,4 @@
-package com.hfhk.common.check.dist;
+package com.hfhk.check.modules.check;
 
 import com.hfhk.cairo.core.tree.TreeNode;
 import lombok.AllArgsConstructor;
@@ -8,58 +8,57 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Data
-@Accessors(chain = true)
+@Accessors
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DistCheck implements TreeNode<String, DistCheck> {
+public class Check implements TreeNode<String, Check> {
+
 	/**
-	 * 编码
+	 * id
 	 */
-	private String sn;
+	private String id;
+
 	/**
 	 * 父级
 	 */
 	private String parent;
+
+	/**
+	 * 编码
+	 */
+	private String sn;
+
 	/**
 	 * 名称
 	 */
 	private String name;
+
 	/**
 	 * 全名
 	 */
 	private String fullName;
+
 	/**
 	 * 标签
 	 */
-	private List<String> tag;
+	private List<String> tags;
 
 	/**
-	 * 问题
+	 * 排序值
 	 */
-	@Builder.Default
-	private List<DistProblem> problems = Collections.emptyList();
+	private Long sort;
 
-	/**
-	 * 子项
-	 */
 	@Builder.Default
-	private List<DistCheck> subs = new ArrayList<>();
-
-	/**
-	 * 排序
-	 */
-	@Builder.Default
-	private Long sort = 0L;
+	private List<Check> subs = new ArrayList<>(0);
 
 	@Override
 	public String id() {
-		return sn;
+		return id;
 	}
 
 	@Override
@@ -68,7 +67,7 @@ public class DistCheck implements TreeNode<String, DistCheck> {
 	}
 
 	@Override
-	public List<DistCheck> subs() {
+	public List<Check> subs() {
 		return subs;
 	}
 }

@@ -1,16 +1,16 @@
-package com.hfhk.common.check.service;
+package com.hfhk.check.service;
 
 import com.hfhk.check.ServiceCheckApp;
+import com.hfhk.check.modules.dist.DistSaveParam;
 import com.hfhk.check.modules.check.CheckService;
 import com.hfhk.check.modules.dist.DistService;
 import com.hfhk.check.modules.problem.ProblemService;
-import com.hfhk.common.check.check.Check;
-import com.hfhk.common.check.check.CheckSaveParam;
-import com.hfhk.common.check.problem.Problem;
-import com.hfhk.common.check.problem.ProblemFindParam;
-import com.hfhk.common.check.problem.ProblemRule;
-import com.hfhk.common.check.problem.ProblemSaveParam;
-import com.hfhk.common.check.dist.DistSaveParam;
+import com.hfhk.check.modules.problem.Problem;
+import com.hfhk.check.modules.problem.ProblemFindParam;
+import com.hfhk.check.modules.problem.ProblemRule;
+import com.hfhk.check.modules.problem.ProblemSaveParam;
+import com.hfhk.check.modules.check.Check;
+import com.hfhk.check.modules.check.CheckSaveParam;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

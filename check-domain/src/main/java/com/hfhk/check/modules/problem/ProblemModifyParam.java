@@ -1,6 +1,5 @@
-package com.hfhk.common.check.problem;
+package com.hfhk.check.modules.problem;
 
-import com.hfhk.common.check.problem.ProblemRule;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +14,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProblemSaveParam {
+public class ProblemModifyParam {
+	/**
+	 * id
+	 */
+	private String id;
 
 	/**
 	 * 检查体系

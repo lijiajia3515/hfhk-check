@@ -3,8 +3,6 @@ package com.hfhk.check.modules.dist;
 import com.hfhk.cairo.core.page.Page;
 import com.hfhk.check.mongo.DistProblemMongo;
 import com.hfhk.check.mongo.Mongo;
-import com.hfhk.common.check.dist.DistProblem;
-import com.hfhk.common.check.dist.DistProblemFindParam;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;

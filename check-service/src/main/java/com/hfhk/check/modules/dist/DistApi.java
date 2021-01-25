@@ -1,7 +1,6 @@
 package com.hfhk.check.modules.dist;
 
 import com.hfhk.cairo.core.page.Page;
-import com.hfhk.common.check.dist.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;

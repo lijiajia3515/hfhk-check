@@ -6,8 +6,6 @@ import com.hfhk.check.modules.serialnumber.StandardCheckSerialNumber;
 import com.hfhk.check.mongo.DistCheckMongo;
 import com.hfhk.check.mongo.DistProblemMongo;
 import com.hfhk.check.mongo.Mongo;
-import com.hfhk.common.check.dist.DistCheck;
-import com.hfhk.common.check.dist.DistCheckFindParam;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;

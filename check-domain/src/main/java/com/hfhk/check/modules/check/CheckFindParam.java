@@ -1,4 +1,4 @@
-package com.hfhk.common.check.dist;
+package com.hfhk.check.modules.check;
 
 import com.hfhk.cairo.core.page.AbstractPage;
 import lombok.*;
@@ -13,8 +13,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DistCheckFindParam extends AbstractPage<DistCheckFindParam> {
-	private Set<String> sns;
+public class CheckFindParam extends AbstractPage<CheckFindParam> {
+	private Set<String> ids;
 	private Set<String> parents;
-	private String keyword;
+	private Set<String> sns;
+	private String name;
 }

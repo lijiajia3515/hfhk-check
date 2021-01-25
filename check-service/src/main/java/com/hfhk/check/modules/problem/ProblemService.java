@@ -4,7 +4,6 @@ import com.hfhk.cairo.core.page.Page;
 import com.hfhk.check.modules.serialnumber.SerialNumberService;
 import com.hfhk.check.modules.serialnumber.StandardCheckSerialNumber;
 import com.hfhk.check.modules.serialnumber.StandardProblemSerialNumber;
-import com.hfhk.common.check.problem.*;
 import com.hfhk.check.mongo.Mongo;
 import com.hfhk.check.mongo.ProblemMongo;
 import com.hfhk.check.modules.check.CheckService;

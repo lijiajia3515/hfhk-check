@@ -1,10 +1,8 @@
-package com.hfhk.common.check.check;
+package com.hfhk.check.modules.check;
 
 import com.hfhk.cairo.core.page.AbstractPage;
 import lombok.*;
 import lombok.experimental.Accessors;
-
-import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -13,9 +11,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CheckFindParam extends AbstractPage<CheckFindParam> {
-	private Set<String> ids;
-	private Set<String> parents;
-	private Set<String> sns;
+public class CheckPageFindParam extends AbstractPage<CheckPageFindParam> {
+	private String parent;
 	private String name;
 }

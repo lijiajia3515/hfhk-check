@@ -1,7 +1,6 @@
 package com.hfhk.check.modules.problem;
 
 import com.hfhk.cairo.core.page.Page;
-import com.hfhk.common.check.problem.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.security.PermitAll;

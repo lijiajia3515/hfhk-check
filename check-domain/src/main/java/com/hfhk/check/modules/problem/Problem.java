@@ -1,35 +1,43 @@
-package com.hfhk.common.check.problem;
+package com.hfhk.check.modules.problem;
 
-import com.hfhk.common.check.problem.ProblemRule;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.util.Collections;
 import java.util.List;
 
 @Data
 @Accessors(chain = true)
-
 @NoArgsConstructor
 @AllArgsConstructor
+
 @Builder
-public class ProblemModifyParam {
+public class Problem {
 	/**
 	 * id
 	 */
 	private String id;
-
 	/**
-	 * 检查体系
+	 * check
 	 */
 	private String check;
+	/**
+	 * 编码
+	 */
+	private String sn;
 
 	/**
 	 * 标题
 	 */
 	private String title;
+
+	/**
+	 * 类型
+	 */
+	private String type;
 
 	/**
 	 * 描述
@@ -49,10 +57,17 @@ public class ProblemModifyParam {
 	/**
 	 * 分数
 	 */
-	private Integer score;
+	@Builder.Default
+	private Integer score = 0;
+
+	@Builder.Default
+	private List<ProblemRule> rules = Collections.emptyList();
 
 	/**
-	 * 规则
+	 * 排序值
 	 */
-	private List<ProblemRule> rules;
+	@Builder.Default
+	private Long sort = 0L;
+
+
 }

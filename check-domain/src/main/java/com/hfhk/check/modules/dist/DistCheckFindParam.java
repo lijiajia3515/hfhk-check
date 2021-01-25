@@ -1,10 +1,9 @@
-package com.hfhk.common.check.problem;
+package com.hfhk.check.modules.dist;
 
 import com.hfhk.cairo.core.page.AbstractPage;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.util.Collection;
 import java.util.Set;
 
 @Data
@@ -14,21 +13,8 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProblemFindParam extends AbstractPage<ProblemFindParam> {
-	private Collection<String> ids;
-
-	/**
-	 * 检查体系
-	 */
-	private Set<String> checks;
-
-	/**
-	 * 编码
-	 */
+public class DistCheckFindParam extends AbstractPage<DistCheckFindParam> {
 	private Set<String> sns;
-
-	/**
-	 * 关键字搜索
-	 */
+	private Set<String> parents;
 	private String keyword;
 }

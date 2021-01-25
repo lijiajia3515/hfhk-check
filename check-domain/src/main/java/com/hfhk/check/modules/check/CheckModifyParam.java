@@ -1,4 +1,4 @@
-package com.hfhk.common.check.check;
+package com.hfhk.check.modules.check;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
