@@ -1,6 +1,6 @@
 package com.hfhk.check.service;
 
-import com.hfhk.check.ServiceCheckApp;
+import com.hfhk.check.CheckServiceApp;
 import com.hfhk.check.modules.dist.DistSaveParam;
 import com.hfhk.check.modules.check.CheckService;
 import com.hfhk.check.modules.dist.DistService;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-@SpringBootTest(classes = ServiceCheckApp.class)
+@SpringBootTest(classes = CheckServiceApp.class)
 @AutoConfigureMockMvc
 public class CheckMockData {
 
