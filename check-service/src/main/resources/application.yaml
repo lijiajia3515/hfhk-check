@@ -62,6 +62,7 @@ server:
       force: true
   port: ${hfhk.server.port:80}
 
+
 feign:
   hystrix:
     enabled: true
@@ -75,28 +76,34 @@ feign:
   client:
     default-to-properties: true
     config:
-      default:
-        logger-level: FULL
-      serviceAuthV1AuthBasicClient:
-        logger-level: FULL
-        request-interceptors:
-          - com.hfhk.cairo.feign.interceptor.BasicRequestInterceptor
-      serviceAuthV1UserClientCredentialsClient:
-        logger-level: FULL
-        request-interceptors:
-          - com.hfhk.cairo.feign.interceptor.ClientOAuth2RequestInterceptor
-      serviceSystemV1FileRequestClient:
-        logger-level: FULL
-        request-interceptors:
-          - com.hfhk.cairo.feign.interceptor.RequestOAuth2RequestInterceptor
-      serviceSystemV1FileClientCredentialsClient:
-        logger-level: FULL
-        request-interceptors:
-          - com.hfhk.cairo.feign.interceptor.ClientOAuth2RequestInterceptor
-      serviceSystemV1DictionaryClientCredentialsClient:
-        logger-level: FULL
-        request-interceptors:
-          - com.hfhk.cairo.feign.interceptor.ClientOAuth2RequestInterceptor
+      client:
+        default-to-properties: true
+        config:
+          default:
+            logger-level: FULL
+
+          serviceAuthV1-auth-basic-client:
+            logger-level: FULL
+            request-interceptors:
+              - com.hfhk.cairo.feign.interceptor.BasicRequestInterceptor
+          serviceAuthV1-user-clientCredentials-client:
+            logger-level: FULL
+            request-interceptors:
+              - com.hfhk.cairo.feign.interceptor.ClientOAuth2RequestInterceptor
+              -
+          serviceSystemV1-fileRequest-client:
+            logger-level: FULL
+            request-interceptors:
+              - com.hfhk.cairo.feign.interceptor.RequestOAuth2RequestInterceptor
+          serviceSystemV1-file-clientCredentials-client:
+            logger-level: FULL
+            request-interceptors:
+              - com.hfhk.cairo.feign.interceptor.ClientOAuth2RequestInterceptor
+          serviceSystemV1-dictionary-clientCredentials-client:
+            logger-level: FULL
+            request-interceptors:
+              - com.hfhk.cairo.feign.interceptor.ClientOAuth2RequestInterceptor
+
 
 security:
   oauth2:
@@ -106,6 +113,7 @@ security:
       client-secret: ${hfhk.client.secret:hfhk_check}
       grant-type: client_credentials
       access-token-uri: http://${hfhk.auth.server:auth-server}/oauth2/token
+
 
 logging:
   level:

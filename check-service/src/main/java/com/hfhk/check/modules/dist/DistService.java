@@ -1,19 +1,20 @@
 package com.hfhk.check.modules.dist;
 
+import com.hfhk.cairo.core.CoreConstants;
 import com.hfhk.cairo.core.tree.TreeConverter;
 import com.hfhk.cairo.mongo.data.Metadata;
+import com.hfhk.check.modules.check.Check;
+import com.hfhk.check.modules.check.CheckFindParam;
 import com.hfhk.check.modules.check.CheckService;
+import com.hfhk.check.modules.problem.Problem;
+import com.hfhk.check.modules.problem.ProblemFindParam;
 import com.hfhk.check.modules.problem.ProblemService;
 import com.hfhk.check.modules.serialnumber.StandardCheckSerialNumber;
 import com.hfhk.check.modules.serialnumber.StandardProblemSerialNumber;
-import com.hfhk.check.mongo.Mongo;
 import com.hfhk.check.mongo.DistCheckMongo;
 import com.hfhk.check.mongo.DistMongo;
 import com.hfhk.check.mongo.DistProblemMongo;
-import com.hfhk.check.modules.check.Check;
-import com.hfhk.check.modules.check.CheckFindParam;
-import com.hfhk.check.modules.problem.Problem;
-import com.hfhk.check.modules.problem.ProblemFindParam;
+import com.hfhk.check.mongo.Mongo;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -165,7 +166,7 @@ public class DistService {
 					.where(DistMongo.FIELD.METADATA.DELETED).is(0L)
 					.and(DistMongo.FIELD.SYSTEM).is(system);
 				Query distDeleteQuery = Query.query(deleteCriteria);
-				Update distDeleteUpdate = Update.update(DistMongo.FIELD.METADATA.DELETED, com.hfhk.cairo.core.Constants.SNOWFLAKE.nextId());
+				Update distDeleteUpdate = Update.update(DistMongo.FIELD.METADATA.DELETED, CoreConstants.SNOWFLAKE.nextId());
 				mongoTemplate.updateMulti(distDeleteQuery, distDeleteUpdate, DistCheckMongo.class, Mongo.Collection.DIST_CHECK);
 				mongoTemplate.updateMulti(distDeleteQuery, distDeleteUpdate, DistProblemMongo.class, Mongo.Collection.DIST_PROBLEM);
 				Collection<DistCheckMongo> savedDistChecks = mongoTemplate.insert(distChecks, Mongo.Collection.DIST_CHECK);
