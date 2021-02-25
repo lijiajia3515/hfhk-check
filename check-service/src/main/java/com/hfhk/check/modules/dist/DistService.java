@@ -85,16 +85,14 @@ public class DistService {
 				Set<String> checkIds = Optional.ofNullable(dist.getItems())
 					.map(y -> y.parallelStream()
 						.map(DistMongo.Item::getCheck)
-						.collect(Collectors.toSet()
-						)
+						.collect(Collectors.toSet())
 					)
 					.orElse(Collections.emptySet());
 				Set<String> problemIds = Optional.ofNullable(dist.getItems())
 					.map(y -> y.stream()
 						.map(DistMongo.Item::getProblems)
 						.flatMap(Collection::parallelStream)
-						.collect(Collectors.toSet()
-						)
+						.collect(Collectors.toSet())
 					)
 					.orElse(Collections.emptySet());
 				Map<String, Check> checkMap = Optional.of(checkIds)
