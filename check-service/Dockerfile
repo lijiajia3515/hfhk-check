@@ -15,11 +15,11 @@ ENV LC_ALL C.UTF-8
 
 ENV SPRING_PROFILES_ACTIVE docker
 
-WORKDIR /hfhk/cairo/system/service
+WORKDIR /hfhk/check/service
 
-ADD build/libs/app.jar /hfhk/cairo/system/service/app.jar
+ADD build/libs/app.jar /hfhk/check/service/app.jar
 
-VOLUME /hfhk/cairo/system/service/logs
+VOLUME /hfhk/check/service/logs
 
 EXPOSE 80
 

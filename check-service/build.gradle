@@ -2,6 +2,8 @@ plugins {
   id 'org.springframework.boot'
 }
 
+apply from: "${rootDir}/gradle/devtools.gradle"
+
 dependencies {
   annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
@@ -27,18 +29,19 @@ dependencies {
   implementation 'org.springframework.cloud:spring-cloud-starter-security'
   implementation 'org.springframework.cloud:spring-cloud-starter-oauth2'
 
-  // rpc
+  // routing
   implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+  implementation 'org.springframework.cloud:spring-cloud-starter-loadbalancer'
   implementation 'io.github.openfeign:feign-okhttp'
 
   // discovery
-  implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery'
+  implementation 'org.springframework.cloud:spring-cloud-starter-consul-discovery'
+  // implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-discovery'
   // implementation "com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config"
 
   // cairo
-  implementation "com.hfhk.cairo.starter:mongo:${cairoVersion}"
-  implementation "com.hfhk.cairo.starter:web:${cairoVersion}"
-  implementation "com.hfhk.cairo.starter:service:${cairoVersion}"
+  implementation "com.hfhk.cairo.starter:cairo-starter-mongo:${cairoVersion}"
+  implementation "com.hfhk.cairo.starter:cairo-starter-service:${cairoVersion}"
 
   implementation project(':check-domain')
 
