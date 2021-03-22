@@ -1,5 +1,5 @@
-rootProject.name = 'check'
+rootProject.name = 'hfhk-check'
 
-include 'check-domain'
-include 'check-service'
-include 'check-client'
+include 'hfhk-check-domain'
+include 'hfhk-check-service'
+include 'hfhk-check-client'
